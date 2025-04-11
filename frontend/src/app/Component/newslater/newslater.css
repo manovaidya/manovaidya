@@ -1,0 +1,74 @@
+.newslater {
+  background-image: url("../../Images/newslater-bg.png");
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 2rem;
+}
+
+/* .newslater-form h2 {
+  margin-bottom: 1rem;
+} */
+.newslater-form p {
+  max-width: 70%;
+  margin: 1rem auto;
+}
+
+.newslater-form h2,
+.newslater-form p {
+  text-align: center;
+}
+
+.newslater .newslater-form {
+  max-width: 70%;
+  margin: auto;
+  padding: 1rem;
+}
+
+.newslater-input-field {
+  margin-bottom: 1rem;
+}
+
+.newslater-input-field input {
+  border: 1px solid black;
+  border-radius: 2rem;
+  padding: 0.7rem;
+}
+
+.form-control:focus {
+  border: none;
+  outline: none;
+}
+
+.input-with-icon {
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .input-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 20px;
+  color: #888;
+}
+
+.input-with-icon input {
+  padding-left: 30px;
+  width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  .newslater .newslater-form {
+    max-width: 100%;
+  }
+
+  .newslater-form p {
+    max-width: 100%;
+  }
+
+  .newslater {
+    padding: 0;
+  }
+}

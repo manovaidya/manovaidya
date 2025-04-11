@@ -1,0 +1,176 @@
+.contact-us {
+  background-color: #f2f2f2;
+  padding: 2rem 0;
+}
+
+.contact-us-top-sec {
+  color: black;
+  text-align: center;
+}
+.contact-us-top-sec h1 {
+  font-size: 60px;
+  font-weight: 800;
+  color: black;
+}
+
+.contact-us-top-sec h5 {
+  font-weight: 600;
+  max-width: 60%;
+  margin: auto;
+}
+
+.contact-us-card {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact-card-main {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12rem;
+  margin-top: 2rem;
+}
+
+.contact-us-card img {
+  width: 150px;
+  height: 150px;
+}
+
+.contact-us-card div h4 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.contact-us-card div a {
+  font-size: 24px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--purple);
+}
+
+.contacts-card {
+  margin-top: 2rem;
+}
+
+.contactUs-btn {
+  background-color: var(--purple);
+  color: white;
+  padding: 6px 15px;
+  border-radius: 1rem;
+  text-decoration: none;
+}
+
+.contact-us-location-main {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact-us-locations {
+  max-width: 50%;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.contact-us-locations i {
+  color: #bd242b;
+  font-size: 70px;
+}
+
+.contact-us-locations h2 {
+  font-size: 60px;
+  font-weight: 700;
+  color: black;
+  margin-bottom: 1rem;
+}
+
+.contact-us-location-main {
+  max-width: 100%;
+  margin: 2rem auto;
+}
+
+.contact-us-location-main a {
+  font-size: 1.5rem;
+  color: var(--purple);
+  text-decoration: none;
+}
+.contact-us-location-main span {
+  font-size: 22px;
+}
+
+.contact-card-body{
+    padding: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+    .contact-us{
+        padding: 1rem 0;
+    }
+
+  .contact-us-locations {
+    max-width: 100%;
+    margin: 1rem auto;
+  }
+  .contact-us-top-sec h1 {
+    font-size: 30px;
+  }
+  .contact-us-top-sec h5 {
+    font-size: 12px;
+    max-width: 100%;
+  }
+  .contact-card-main {
+    border-radius: 2rem;
+  }
+  .contact-us-card {
+    margin-bottom: 1rem;
+  }
+  .contact-us-card img {
+    width: 120px;
+    height: 120px;
+  }
+  .contact-us-card div a {
+    font-size: 18px;
+  }
+  .contact-card-main {
+    padding: 1rem;
+  }
+  .contact-card-body{
+    padding: 0.5rem;
+    height: 100%;
+}
+.contacts-card .col-md-3{
+    margin-bottom: 1rem;
+}
+.contact-card-body .card-title{
+    font-size: 16px;
+    font-weight: bold;
+}
+.contact-card-body .card-text{
+    font-size: 10px;
+}
+
+.contact-us-locations h2{
+    font-size: 30px;
+}
+.contact-us-locations h4{
+    font-size: 20px;
+}
+
+.contact-us-location-main a{
+    font-size: 16px;
+}
+
+.contact-us-locations i{
+    font-size: 30px;
+}
+
+.contact-us-location-main{
+    justify-content: space-around;
+    gap: 0;
+    margin: 0;
+}
+
+}

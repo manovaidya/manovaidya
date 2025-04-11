@@ -1,0 +1,162 @@
+/* Health Test Section */
+.health-test {
+  background: linear-gradient(to bottom, #f5d0fe, #eed5f6);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.health-test h2 {
+  font-size: 2rem;
+  color: #4a2c72;
+  font-weight: 600;
+}
+
+.health-test p {
+  font-size: 1rem;
+  color: #6f4e8c;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.health-test b {
+  color: #3d297c;
+}
+
+/* Test Section */
+.test-section {
+  max-width: 70%;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.test-heading {
+  background-color: #9b4de0;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.test-heading h2 {
+  color: white;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.test-section p {
+  font-size: 1.1rem;
+  color: #6a4d9b;
+  margin-bottom: 1.2rem;
+}
+
+/* Question Style */
+.test-main {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.test-main p {
+  font-size: 1.1rem;
+  color: #5c4a7a;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Custom Button Styles */
+.custom-button {
+  padding: 6px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f2c9f4;
+  color: #6a4d9b;
+  font-weight: 500;
+  font-size: 1rem;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+  background-color: #9b4de0;
+  color: white;
+  transform: scale(1.05);
+}
+
+.custom-button.selected {
+  background-color: #9b4de0;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Submit Button Styles */
+.custom-submit-button {
+  padding: 5px 20px;
+  background-color: #28a745;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.custom-submit-button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+/* Button Group Layout */
+.d-flex {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.custom-button-group {
+  gap: 15px;
+  margin-top: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .health-test {
+    padding: 1rem 0;
+  }
+  .test-section {
+    max-width: 100%;
+    margin: 0;
+  }
+  .test-main {
+    box-shadow: none;
+    background-color: transparent;
+    padding: 0;
+  }
+  .custom-button-group {
+    gap: 5px;
+    margin-top: 1rem;
+  }
+  .custom-button {
+    font-size: 10px;
+    padding: 6px 10px;
+    margin: 0;
+  }
+  .test-main p {
+    font-size: 12px;
+  }
+  .health-test h2 {
+    font-size: 16px;
+  }
+  .health-test p {
+    font-size: 10px;
+    margin: 0;
+  }
+  .test-heading {
+    margin-bottom: 1rem;
+  }
+}

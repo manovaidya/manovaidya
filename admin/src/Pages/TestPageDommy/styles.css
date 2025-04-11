@@ -1,0 +1,49 @@
+.results-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.category-box {
+    padding: 20px;
+    margin: 20px 0;
+    font-size: 1.5rem;
+}
+
+.mild {
+    background-color: lightgreen;
+    color: darkgreen;
+}
+
+.moderate {
+    background-color: lightyellow;
+    color: orange;
+}
+
+.severe {
+    background-color: lightcoral;
+    color: darkred;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+footer {
+    margin-top: 30px;
+    font-size: 1rem;
+}
+
+footer button {
+    margin-top: 10px;
+}

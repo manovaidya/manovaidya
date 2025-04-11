@@ -1,0 +1,126 @@
+/* Signup Section Styling */
+.signup-section {
+  padding: 50px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 60%;
+  margin: auto;
+}
+
+.signup-section .container {
+  background-color: #fae5fd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.signup-title {
+  text-align: center;
+  color: #6a1b9a;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.form-control:focus {
+  border-color: #6a1b9a;
+  box-shadow: 0 0 5px rgba(106, 27, 154, 0.3);
+  outline: none;
+}
+
+.buttons-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.signup-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  background-color: #6a1b9a;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-button:hover {
+  background-color: #4a0072;
+}
+
+.social-signup {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.google-button,
+.facebook-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.google-button {
+  background-color: #db4437;
+}
+
+.google-button:hover {
+  background-color: #c23321;
+}
+
+.facebook-button {
+  background-color: #4267b2;
+}
+
+.facebook-button:hover {
+  background-color: #365899;
+}
+.buttons-container {
+  margin-bottom: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .signup-section {
+    padding: 0px;
+    max-width: 100%;
+  }
+
+  .signup-section .container {
+    box-shadow: none;
+    padding: 10px;
+    justify-content: space-between;
+  }
+  .form-group {
+    margin-bottom: 10px;
+  }
+}

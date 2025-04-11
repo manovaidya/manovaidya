@@ -1,0 +1,116 @@
+.consultation-main {
+  padding: 2rem;
+}
+
+.consultation-main h1 {
+  margin-bottom: 1rem;
+}
+
+.online-consultant-heading {
+  background-color: var(--purple);
+  padding: 1rem;
+  color: white;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.online-consultant-heading p {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+.online-consultant-heading h4 {
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 1px;
+}
+
+.online-consultant .card {
+  padding: 2rem;
+  margin-top: 1rem;
+  box-shadow: 0px 4px 4px 0px lightgray;
+  margin-bottom: 1rem;
+  border: none;
+}
+
+.consultNow {
+  text-decoration: none;
+  border: none;
+  background-color: #cf77fc;
+  max-width: fit-content;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 2rem;
+}
+.online-consultant .card p {
+  text-align: justify;
+  margin-bottom: 2rem;
+}
+
+.consult-form {
+  margin-bottom: 1rem;
+}
+
+.form-modal-consultation .modal-header {
+  background-color: var(--purple);
+  color: white;
+}
+.form-modal-consultation .modal-header .btn-close {
+  color: white;
+}
+.form-modal-consultation .modal-body form input,
+.form-modal-consultation .modal-body form textarea,
+.form-modal-consultation .modal-body form select {
+  border: 1px solid black;
+}
+
+.form-modal-consultation .modal-body form label {
+  color: black;
+  font-weight: 600;
+}
+
+.form-modal-consultation .modal-footer {
+  background-color: var(--purple);
+  display: flex;
+  justify-content: space-between;
+  color: white;
+}
+
+.modal-footer .price {
+  font-size: 30px;
+  color: white;
+  font-weight: 600;
+}
+
+.consultation-header {
+  background-image: url("../../Images/costomized-banner.png");
+  height: 450px;
+  background-repeat: no-repeat;
+  width: 100%;
+  object-fit: contain;
+}
+
+.consultation-header{
+  position: relative;
+}
+.consultation-header button{
+  position: absolute;
+  top: 45%;
+  left: 5%;
+}
+
+@media only screen and (max-width: 768px) {
+  .consultation-header {
+    background-image: url("../../Images/costomized-banner-mobile.png");
+    height: 400px;
+    background-repeat: no-repeat;
+    width: 100%;
+    object-fit: contain;
+  }
+  .consultation-main {
+    padding: 0.5rem;
+  }
+  .online-consultant .card {
+    padding: 1rem;
+  }
+}

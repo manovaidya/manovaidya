@@ -1,0 +1,26 @@
+.about-us{
+    padding: 2rem 0;
+    box-shadow: 0px 14px 49px 0px lightgray;
+}
+.about-card-1 {
+  background-color: #b962cb;
+  padding: 1rem;
+  color: white;
+  border-radius: 1rem;
+}
+
+.about-card-2 {
+  background-color: #4b3037;
+  color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.about-details{
+  background-image: url("../../Images/about-bg.png");
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  padding: 2rem 0;
+}

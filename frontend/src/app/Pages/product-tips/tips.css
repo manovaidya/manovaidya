@@ -1,0 +1,122 @@
+.product-tips-header {
+  background-image: url("../../Images/tips-bg.png");
+  width: 100%;
+  height: fit-content;
+  padding: 2rem 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.product-tips-test {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-tips-test p {
+  margin: 0;
+}
+
+.product-tips-heading h3 {
+  font-weight: 800;
+}
+
+.product-tips-test button {
+  background-color: var(--purple);
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  width: fit-content;
+  color: white;
+}
+
+/* product tips cards  */
+.tips-product-page {
+  padding: 2rem 0;
+}
+.tips-detail-card {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+/* .tips-product-page .row{
+    display: flex;
+    justify-content: center;
+} */
+.tips-detail-card .title {
+  font-size: 14px;
+}
+.tips-detail-card .product-name {
+  font-size: 20px;
+  color: var(--purple);
+  font-weight: 700;
+}
+.tips-detail-card .product-desc {
+  font-size: 14px;
+}
+.product-footer .product-price {
+  font-weight: 600;
+  font-size: 24px;
+}
+.tips-detail-card .product-footer .product-price span {
+  font-weight: 600;
+  font-size: 24px;
+}
+/* product tips cards end */
+
+/* how to decide section */
+.howDecide h2 {
+  text-align: center;
+}
+.howDecide {
+  background-color: #fef5f8;
+  padding: 2rem;
+}
+
+.decide-details ul li {
+  line-height: 40px;
+}
+/* how to decide section end */
+
+.bi-star-fill {
+  color: gold;
+  font-size: 20px;
+}
+
+.product-rating {
+  display: flex;
+  gap: 3px;
+  align-items: baseline;
+}
+.product-rating span {
+  font-size: 12px;
+}
+
+@media only screen and (max-width:768px) {
+  .product-tips-test {
+    display: block;
+  }
+  .tips-detail-card{
+    padding: 0.5rem;
+  }
+  .product-rating{
+    display: block;
+  }
+  .tips-detail-card .title{
+    margin: 0;
+    font-size: 12px;
+  }
+  .tips-detail-card .product-desc{
+    font-size: 10px;
+  }
+  .tips-detail-card .product-name{
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .howDecide{
+    padding: 1rem;
+  }
+  .product-card-details ul{
+    padding-left: 10px;
+  }
+}
