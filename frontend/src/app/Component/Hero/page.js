@@ -93,7 +93,7 @@ const Page = ({ title }) => {
       </section>
 
       <section className="top-cards">
-      <h2 className="text-center" style={{fontWeight:'700' , color:'var(--purple)'}}>Explore By Diseases</h2>
+        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)' }}>Explore By Diseases</h2>
         <div className="cards-container">
           {categories?.map((categorie, index) => (
             <Link href={`/Pages/product-tips/${categorie?._id}`} key={index}>
@@ -157,25 +157,24 @@ const Page = ({ title }) => {
                     </div>
                     <div className="col-md-8">
                       <div className="product-card-details">
-
                         <h5>{kit?.productName}</h5>
                         <span className="descrip">
-                           {Parser().parse(kit?.productDescription)}</span>
+                          {Parser().parse(kit?.productDescription)}</span>
                         <div className="detail-sec">
-                        <p className="m-0">
-                          <b style={{color:"var(--purple)" , fontSize:"14px"}}>
-                            {kit?.variant[0]?.discountPrice} % off
-                          </b>
-                        </p>
-                        <p className="m-0">
-                          <del>
-                            ₹ {kit?.variant[0]?.price}
-                          </del>
-                        </p>
-                        <span className="final-price">
-                          <strong>₹ {kit?.variant[0]?.finalPrice}</strong>
-                        </span>
-                          </div>
+                          <p className="off-price m-0">
+                            <b style={{ fontSize: "14px" }}>
+                              {kit?.variant[0]?.discountPrice} % off
+                            </b>
+                          </p>
+                          <span className="final-price">
+                            <strong>₹ {kit?.variant[0]?.finalPrice}</strong>
+                          </span>
+                          <p className="del-mrp">
+                            MRP: <del>
+                              ₹ {kit?.variant[0]?.price}
+                            </del>
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -189,7 +188,7 @@ const Page = ({ title }) => {
       <section className="product-overview-bg">
         <Link href={'/Pages/products'}>
 
-        <button className="buy-now">Buy It Now</button>
+          <button className="buy-now">Buy It Now</button>
         </Link>
       </section>
 

@@ -54,17 +54,17 @@ const Page = ({ searchParams }) => {
   }, [id, title]);
 
   useEffect(() => {
-    try{
-    if (searchTerm?.length) {
-      setProducts(
-        products?.filter((product) => product?.productName?.toLowerCase()?.includes(searchTerm?.toLowerCase()))
-      );
-    } else {
-      setProducts(products);
+    try {
+      if (searchTerm?.length) {
+        setProducts(
+          products?.filter((product) => product?.productName?.toLowerCase()?.includes(searchTerm?.toLowerCase()))
+        );
+      } else {
+        setProducts(products);
+      }
+    } catch (err) {
+      console?.log(err)
     }
-  }catch(err){
-    console?.log(err)
-  }
   }, [searchTerm])
 
   const truncateText = (text, maxLength = 100) => {
@@ -98,29 +98,39 @@ const Page = ({ searchParams }) => {
         <div className="row">
           {products.map((item) => (
             <div key={item._id} className="col-md-3 col-6 mb-4">
+              <div className="product-slider-card">
               <Link className="text-black text-decoration-none" href={`/Pages/products/${item?._id}`}>
-                <div data-aos="zoom-in" className="product-card" style={{ padding: 10 }}>
+                <div data-aos="zoom-in" className="product-card p-0">
                   <img
-                    style={{borderRadius:'10px 10px 0px 0px' }}
                     src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
                     alt={item.name}
                     className="product-image"
                   />
                   <div className="product-details">
                     <h5 className="product-name">
-                      {truncateText(item?.productName, 18)}
+                      {truncateText(item?.productName, 30)}
                     </h5>
-                    <p className="product-desc" style={{display: '-webkit-flex', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', top: 5
-                    }}>
+                    <p className="product-desc">
                       {Parser().parse(truncateText(item?.productSubDescription, 90))}
                     </p>
-                    <div className="product-footer" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div className="product-footer" style={{ alignItems: 'center', justifyContent: 'space-between' , alignItems:'end' }}>
                       <div className="product-price m-0">
-                        <div style={{ display: 'flex', gap: 10, fontSize: '12px', textAlign: 'center' , alignItems: 'center', justifyContent: 'space-between'}}>
-                          <p className="m-0" style={{ textDecoration: 'line-through' }}>₹ {item?.variant[0]?.price}</p>
-                          <span className="fs-5">₹{item.variant[0]?.finalPrice}</span>
+                        <div>
+                          <p className="del-mrp">
+                            MRP: <del>
+                              ₹ {item?.variant[0]?.price}
+                            </del>
+                          </p>
+                          <span className="final-price">
+                            <strong>₹ {item?.variant[0]?.finalPrice}</strong>
+                          </span>
                         </div>
                       </div>
+                      <p className="off-price m-0">
+                            <b style={{ fontSize: "14px" }}>
+                              {item?.variant[0]?.discountPrice} % off
+                            </b>
+                          </p>
                       <p className="product-rating text-end m-0">
                         {getProductRating(item?._id)} <i className="bi bi-star"></i> (
                         {reviews.filter(review => review.productId === item?._id).length || 10} reviews)
@@ -129,6 +139,7 @@ const Page = ({ searchParams }) => {
                   </div>
                 </div>
               </Link>
+                </div>
             </div>
           ))}
         </div>

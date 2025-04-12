@@ -67,67 +67,77 @@ const Page = () => {
   return (
     <>
       <section className="product-slider py-5">
-  <div className="container">
-    <h2 className="product-slider-title text-center mb-3">Ayurvedic Products</h2>
-    <p className="product-slider-subtitle text-center mb-4">
-      Explore our range of natural, herbal, and ayurvedic products for a healthier lifestyle.
-    </p>
+        <div className="container">
+          <h2 className="product-slider-title text-center mb-3">Ayurvedic Products</h2>
+          <p className="product-slider-subtitle text-center mb-4">
+            Explore our range of natural, herbal, and ayurvedic products for a healthier lifestyle.
+          </p>
 
-    <Swiper
-      modules={[Autoplay]}
-      spaceBetween={20}
-      slidesPerView={4}
-      autoplay={{ delay: 4000, disableOnInteraction: false }}
-      breakpoints={{
-        0: { slidesPerView: 1 },
-        576: { slidesPerView: 2 },
-        768: { slidesPerView: 3 },
-        1200: { slidesPerView: 4 },
-      }}
-    >
-      {products?.map((item, index) => (
-        <SwiperSlide key={index}>
-          <div className="product-slider-card h-100">
-            <Link href={`/Pages/products/${item?._id}`}>
-              <img
-                src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
-                alt={item?.productName}
-                className="product-slider-image w-100 rounded-3 mb-3"
-                style={{ height: '200px', objectFit: 'cover' }}
-              />
-            </Link>
-            <div className="product-slider-details">
-              <h5 className="product-name fw-semibold">{truncateText(item?.productName, 18)}</h5>
-              <p
-                className="product-desc text-muted small mb-2"
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  // minHeight: '60px',
-                }}
-              >
-                {Parser().parse(truncateText(item?.productSubDescription, 50))}
-              </p>
-              <div className="product-slider-footer d-flex justify-content-between align-items-center">
-                <div className="pro-sli">
-                  <p className="mb-0 text-decoration-line-through text-muted">₹ {item?.variant[0]?.price}</p>
-                  <p className="product-slider-price fw-bold text-success mb-0">₹ {item?.variant[0]?.finalPrice}</p>
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={20}
+            slidesPerView={4}
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            breakpoints={{
+              0: { slidesPerView: 1 },
+              576: { slidesPerView: 2 },
+              768: { slidesPerView: 3 },
+              1200: { slidesPerView: 4 },
+            }}
+          >
+            {products?.map((item, index) => (
+              <SwiperSlide key={index}>
+                <div className="product-slider-card h-100">
+                  <Link href={`/Pages/products/${item?._id}`}>
+                    <img
+                      src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
+                      alt={item?.productName}
+                      className="product-slider-image w-100 rounded-2"
+                      style={{ height: '200px', objectFit: 'cover' }}
+                    />
+                  </Link>
+                  <div className="product-slider-details">
+                    <h5 className="product-name fw-semibold">{truncateText(item?.productName, 18)}</h5>
+                    <p
+                      className="product-desc text-muted small mb-2"
+                      style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        // minHeight: '60px',
+                      }}
+                    >
+                      {Parser().parse(truncateText(item?.productSubDescription, 50))}
+                    </p>
+                    <div className="product-slider-footer">
+                      <div className="pro-sli">
+
+                        <p className="del-mrp">
+                          MRP: <del>
+                            ₹ {item?.variant[0]?.price}
+                          </del>
+                        </p>
+                        <p className="final-price"><strong> ₹ {item?.variant[0]?.finalPrice}</strong></p>
+                      </div>
+                      <p className="off-price m-0">
+                        <b style={{ fontSize: "14px" }}>
+                          {item?.variant[0]?.discountPrice} % off
+                        </b>
+                      </p>
+                      <p className="product-slider-rating">
+                        {getProductRating(item?._id)} <i className="bi bi-star-fill"></i> (
+                        {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <p className="product-slider-rating mb-0 text-warning small">
-                  {getProductRating(item?._id)} <i className="bi bi-star-fill"></i> (
-                  {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
-                </p>
-              </div>
-            </div>
-          </div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  </div>
-</section>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </section>
 
 
       <section className="manovedya-hero-about">
