@@ -47,7 +47,7 @@ const __dirname = path.dirname(__filename);
 // Middleware
 
 const allowedOrigins = [
-  "https://api.manovaidya.com",
+  // "https://api.manovaidya.com",
   "http://localhost:3000",
   "http://localhost:3001",
   "http://localhost:3002",
