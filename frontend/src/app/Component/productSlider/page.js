@@ -75,7 +75,7 @@ const Page = () => {
 
           <Swiper
             modules={[Autoplay]}
-            spaceBetween={20}
+            spaceBetween={10}
             slidesPerView={4}
             autoplay={{ delay: 4000, disableOnInteraction: false }}
             breakpoints={{
