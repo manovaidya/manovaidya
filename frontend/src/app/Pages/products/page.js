@@ -128,7 +128,7 @@ const Page = ({ searchParams }) => {
                       </div>
                       <p className="off-price m-0">
                             <b style={{ fontSize: "14px" }}>
-                              {item?.variant[0]?.discountPrice} % off
+                              {item?.variant[0]?.discountPrice}% off
                             </b>
                           </p>
                       <p className="product-rating text-end m-0">

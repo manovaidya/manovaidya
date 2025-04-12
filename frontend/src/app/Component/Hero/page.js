@@ -103,7 +103,6 @@ const Page = ({ title }) => {
                   alt={categorie?.categoryName}
                   className="hero-cardDieses"
                 />
-                {/* <h3 className="card-title">{categorie?.categoryName}</h3> */}
               </div>
             </Link>
           ))}
