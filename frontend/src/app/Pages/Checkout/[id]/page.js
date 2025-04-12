@@ -17,11 +17,14 @@ import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
 import { useDispatch } from "react-redux";
 import { login } from "../../../redux/slices/user-slice"
+import { State } from "country-state-city";
 
 const Page = ({ params }) => {
   const { error, Razorpay } = useRazorpay();
   const router = useRouter();
   const { id } = use(params);
+  const [countryCode] = useState('IN');
+  const [stateList, setStateList] = useState([]);
   const dispatch = useDispatch()
   const [isChecked, setIsChecked] = useState(false);
   const [cart, setCart] = useState(null)
@@ -40,9 +43,13 @@ const Page = ({ params }) => {
     const data = localStorage.getItem("User_data");
     const user_data = JSON.parse(data);
     setUser_data(user_data)
+
   }, [])
 
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXX", cart)
+  useEffect(() => {
+    setStateList(State?.getStatesOfCountry(countryCode));
+  }, [countryCode]);
+  // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXX", cart)
 
   const removedCart = async () => {
     sessionStorage.removeItem("carts");
@@ -100,7 +107,7 @@ const Page = ({ params }) => {
             confirmButtonText: "Okay",
           });
           removedCart()
-
+          router.push("/");
         } else {
           Swal.fire({
             title: "Paymant Failed!",
@@ -139,7 +146,7 @@ const Page = ({ params }) => {
     rzp1.open();
   };
   ////////////////////////////////////////////////////////////////////////////////
-  console.log("cart", cart)
+  // console.log("cart", cart)
   // Handle form submission
   const handleSubmit = async (e) => {
     // alert("jjj")
@@ -183,6 +190,7 @@ const Page = ({ params }) => {
             confirmButtonText: "Okay",
           });
           removedCart()
+          router.push("/");
 
         } else {
           Swal.fire({
@@ -258,13 +266,14 @@ const Page = ({ params }) => {
                 <input className="form-control" type="text" name="houseNo" value={formData.houseNo} onChange={handleInputChange} placeholder="Flat/House No, Building/Apartment/Company Name" required />
                 <input className="form-control" type="text" name="street" value={formData.street} onChange={handleInputChange} placeholder="Street/Road Name, Sector Name, Area/Village/PO Name" required />
                 <div className="address-fields">
-                  <input className="form-control" type="text" name="city" value={formData.city} onChange={handleInputChange} placeholder="City/District/Town Name" required />
-                  <select
+                  <input  className="form-control" type="text" name="city" value={formData.city} onChange={handleInputChange} placeholder="City/District/Town Name" required />
+                  <select 
                     name="state"
-                    value={formData.state}
+                    value={formData?.state}
                     onChange={handleInputChange}
                   >
                     <option value="">State</option>
+                    {/* {stateList?.map((state) => (<option value={`${state?.name}`}>{state?.name}</option>))} */}
                     <option value="MP">MP</option>
                     <option value="UP">UP</option>
                     <option value="Dehli">Dehli</option>

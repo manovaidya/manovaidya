@@ -5,6 +5,7 @@ import Cart from '../models/Cart.js';
 import mongoose from 'mongoose'
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 import User from '../models/User.js';
+import { sendOrderEmails } from '../middleware/mail.js';
 
 const router = express.Router();
 
@@ -48,24 +49,7 @@ router.get('/get-all-orders', async (req, res) => {
 router.post('/create-order', async (req, res) => {
   try {
     // Get the body data
-    const {
-      email,
-      name,
-      phone,
-      bottle,
-      day,
-      user,
-      orderItems,
-      address,
-      consent,
-      saveInfo,
-      payment_id,
-      paymentMethod,
-      billingAddress,
-      totalAmount,
-      shippingAmount,
-      couponDiscount
-    } = req.body;
+    const { email, name, phone, bottle, day, user, orderItems, address, consent, saveInfo, payment_id, paymentMethod, billingAddress, totalAmount, shippingAmount, couponDiscount } = req.body;
 
     console.log("BODY:BODY:BODYBODY:BODY:BODY", req.body);
 
@@ -85,11 +69,7 @@ router.post('/create-order', async (req, res) => {
       phone: phone
     };
 
-    const updatedUser = await User.findByIdAndUpdate(
-      user,
-      { address: shippingAddress },
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(user, { address: shippingAddress }, { new: true });
 
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
@@ -116,10 +96,11 @@ router.post('/create-order', async (req, res) => {
 
     const order = await newOrder.save();
 
-    res.status(201).json({
-      success: true,
-      order,
-    });
+    res.status(201).json({ success: true, order, });
+
+    if (order) {
+      sendOrderEmails({ customerName: name, email, phone, orderId: order._id, orderDate: order.createdAt, orderItems, totalAmount, paymentId: payment_id, couponDiscount, billingAddress, paymentMethod, address })
+    }
   } catch (error) {
     console.error('Error creating order:', error);
     res.status(500).json({ message: 'Server Error' });
@@ -186,7 +167,7 @@ router.get('/get-order-by-user-id/:id', async (req, res) => {
     const orders = await Order.find({ user: id })
       .populate('user') // Populate the user field
       .populate('orderItems.productId');
-      
+
     console.log('orders', orders)
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, message: 'No orders found for this user' });

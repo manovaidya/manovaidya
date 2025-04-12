@@ -110,9 +110,9 @@ router.get('/delete-blog/:id', async (req, res) => {
       fs.unlinkSync(`${blog.blogImage}`);
     }
 
-    await Blog.findByIdAndDelete(id);
+   const deletedBlog = await Blog.findByIdAndDelete(id);
 
-    res.status(200).json({ message: 'Blog deleted successfully' });
+    res.status(200).json({  status: true, message: 'Blog deleted successfully' ,blogs:deletedBlog});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error deleting blog', error });

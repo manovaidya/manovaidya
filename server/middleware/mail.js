@@ -1,9 +1,9 @@
 import Nodemailer from "nodemailer";
 
 const sendOtpPartnerSignUp = async (data) => {
-  const { email, otp } = data;
-  console.log("email", email, "otp", otp);
-  const body = `
+    const { email, otp } = data;
+    console.log("email", email, "otp", otp);
+    const body = `
   <!DOCTYPE html>
 <html lang="en">
 
@@ -98,19 +98,19 @@ const sendOtpPartnerSignUp = async (data) => {
 </body>
 </html>
   `;
-  const subject = "Verify your Email";
-  return await sendMail({ to: email, subject, html: body });
+    const subject = "Verify your Email";
+    return await sendMail({ to: email, subject, html: body });
 };
 
 const sendResetPassword = async (data) => {
-  const { email, token, user } = data;
-  // ADMIN_BASE_URL
-  console.log("token_data:==", email, token);
-  const baseUrl =
-    user === "admin" ? process.env.ADMIN_BASE_URL : process.env.BASE_URL;
-  const resetLink = baseUrl + `/Pages/reset-password/${token}`;
+    const { email, token, user } = data;
+    // ADMIN_BASE_URL
+    console.log("token_data:==", email, token);
+    const baseUrl =
+        user === "admin" ? process.env.ADMIN_BASE_URL : process.env.BASE_URL;
+    const resetLink = baseUrl + `/Pages/reset-password/${token}`;
 
-  const body = `
+    const body = `
     <!DOCTYPE html>
   <html lang="en">
   
@@ -206,14 +206,14 @@ const sendResetPassword = async (data) => {
   </html>
     `;
 
-  const subject = "Reset your Password";
-  return await sendMail({ to: email, subject, html: body });
+    const subject = "Reset your Password";
+    return await sendMail({ to: email, subject, html: body });
 };
 
 const sendEmailUpdateOtp = async (data) => {
-  const { name, otp, email } = data;
+    const { name, otp, email } = data;
 
-  const body = `
+    const body = `
   <!DOCTYPE html>
 <html lang="en">
 
@@ -311,23 +311,23 @@ const sendEmailUpdateOtp = async (data) => {
 </html>
   `;
 
-  const subject = "Verify your Email";
-  return await sendMail({ to: email, subject, html: body });
+    const subject = "Verify your Email";
+    return await sendMail({ to: email, subject, html: body });
 };
 
 const sendThankYouForBookingConsultation = async (data) => {
-  const {
-    patientName,
-    concernChallenge,
-    email,
-    phone,
-    scheduleCalendar,
-    scheduleTime,
-    chooseDoctor,
-    payment_id,
-  } = data;
+    const {
+        patientName,
+        concernChallenge,
+        email,
+        phone,
+        scheduleCalendar,
+        scheduleTime,
+        chooseDoctor,
+        payment_id,
+    } = data;
 
-  const body = `
+    const body = `
   <!DOCTYPE html>
 <html lang="en">
 
@@ -456,41 +456,144 @@ const sendThankYouForBookingConsultation = async (data) => {
 
 </html>
   `;
-  const subject = "Thank You for Booking Consultation";
-  return await sendMail({ to: email, subject, html: body });
+    const subject = "Thank You for Booking Consultation";
+    return await sendMail({ to: email, subject, html: body });
 };
 
+const sendOrderEmails = async (data) => {
+    const { customerName, email, phone, orderId, orderDate, orderItems, totalAmount, paymentId, couponDiscount, billingAddress, paymentMethod, address, } = data;
+
+    const itemsList = orderItems.map(item => `
+      <tr>
+        <td>${item.name}</td>
+        <td>${item.quantity}</td>
+        <td>₹${item.price}</td>
+      </tr>
+    `).join("");
+
+    const addressBlock = (addr) => `
+      ${addr?.name || ''}<br/>
+      ${addr?.street || ''}<br/>
+      ${addr?.city || ''}, ${addr?.state || ''} - ${addr?.pinCode || ''}<br/>
+      ${addr?.country || ''}<br/>
+      Phone: ${phone || ''}
+    `;
+
+    const emailTemplate = (isCustomer = true) => `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+          .header { background-color: #ff7043; color: white; padding: 20px; text-align: center; }
+          .header img { width: 100px; }
+          .content { padding: 20px; }
+          .summary-table, .item-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          .summary-table th, .summary-table td, .item-table th, .item-table td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+          .footer { background: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #777; }
+          .btn { display: inline-block; padding: 12px 20px; background-color: #ff7043; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <img src="https://api.manovaidya.com/uploads/logos/logo.png" />
+            <h1>${isCustomer ? 'Thank You for Your Order!' : 'New Order Notification'}</h1>
+          </div>
+          <div class="content">
+            <h2>${isCustomer ? `Hi ${customerName},` : 'Order Details:'}</h2>
+            <p>${isCustomer
+            ? 'We’ve received your order and are preparing it for shipment.'
+            : `A new order has been placed by ${customerName}.`}</p>
+  
+            <table class="summary-table">
+              <tr><th>Order ID</th><td>${orderId}</td></tr>
+              <tr><th>Date</th><td>${orderDate}</td></tr>
+              <tr><th>Payment ID</th><td>${paymentId || 'N/A'}</td></tr>
+              <tr><th>Payment Method</th><td>${paymentMethod || 'N/A'}</td></tr>
+              ${couponDiscount ? `<tr><th>Coupon Discount</th><td>₹${couponDiscount}</td></tr>` : ''}
+              <tr><th>Total Amount</th><td>₹${totalAmount}</td></tr>
+            </table>
+  
+            <h3>Items Ordered</h3>
+            <table class="item-table">
+              <thead><tr><th>Product</th><th>Qty</th><th>Price</th></tr></thead>
+              <tbody>${itemsList}</tbody>
+            </table>
+  
+            <h3>Billing Address</h3>
+            <p>${addressBlock(billingAddress)}</p>
+  
+            <h3>Shipping Address</h3>
+            <p>${addressBlock(address)}</p>
+  
+            ${isCustomer
+            ? `<a href="https://manovaidya.com/Pages/User_Profile" class="btn">View My Order</a>`
+            : ''
+        }
+          </div>
+          <div class="footer">
+            ${isCustomer
+            ? 'If you have questions, feel free to contact our support team.'
+            : 'Login to your dashboard to manage this order.'}
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Email to Customer
+    await sendMail({
+        to: email,
+        subject: "Thank You for Your Order!",
+        html: emailTemplate(true),
+    });
+
+    // Email to Admin/Owner
+    await sendMail({
+        to: "aasibkhan155471@gmail.com", // Replace this
+        subject: `New Order Received: ${orderId}`,
+        html: emailTemplate(false),
+    });
+
+    return true;
+};
+
+
+
 const transporter = Nodemailer.createTransport({
-  host: "smtp.hostinger.com", // Replace with your SMTP server host
-  port: 465, // Replace with your SMTP server port
-  secure: true, // true for 465, false for other ports
-  auth: {
-    user: "info@gromedia.co.in", // Replace with your SMTP server username
-    pass: "@Gromedia2024", // Replace with your SMTP server password
-  },
+    host: "smtp.hostinger.com", // Replace with your SMTP server host
+    port: 465, // Replace with your SMTP server port
+    secure: true, // true for 465, false for other ports
+    auth: {
+        user: "info@gromedia.co.in", // Replace with your SMTP server username
+        pass: "@Gromedia2024", // Replace with your SMTP server password
+    },
 });
 
 const sendMail = ({ to, subject, html, from = "info@gromedia.co.in" }) => {
-  return new Promise((resolve, reject) => {
-    const mailOptions = {
-      from: "ManoVaidya <info@gromedia.co.in>",
-      to,
-      subject,
-      html,
-    };
+    return new Promise((resolve, reject) => {
+        const mailOptions = {
+            from: "ManoVaidya <info@gromedia.co.in>",
+            to,
+            subject,
+            html,
+        };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(info);
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return reject(error);
+            }
+            resolve(info);
+        });
     });
-  });
 };
 
 export {
-  sendOtpPartnerSignUp,
-  sendResetPassword,
-  sendEmailUpdateOtp,
-  sendThankYouForBookingConsultation,
+    sendOtpPartnerSignUp,
+    sendResetPassword,
+    sendEmailUpdateOtp,
+    sendThankYouForBookingConsultation,
+    sendOrderEmails,
 };

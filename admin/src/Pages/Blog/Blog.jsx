@@ -44,12 +44,12 @@ const Blog = () => {
 
       if (result.isConfirmed) {
         const data = await getData(`api/blogs/delete-blog/${id}`);
+        console.log("data", data)
         if (data.status === true) {
           fetchBlogs()
           setBlogs(blogs?.filter((blog) => blog?._id !== id));
           toast.success("blog deleted successfully");
         }
-
       }
     } catch (error) {
       toast.error("Failed to delete the blog");

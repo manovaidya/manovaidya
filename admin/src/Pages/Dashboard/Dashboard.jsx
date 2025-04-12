@@ -138,7 +138,7 @@ const Dashboard = () => {
         </div>
 
         <div className="dashboard-card">
-          <Link to="/all-subcategory">
+          <Link to="/sub-diseases">
             <i className="fa-solid fa-heartbeat"></i>
             <h3>Manage Sub Diseases</h3>
             <p>Organize products in sub-Diseases</p>
