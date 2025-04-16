@@ -36,7 +36,7 @@ router.get('/all-product', async (req, res) => {
       search,
       disease,
       page = 1,
-      limit = 10
+     
     } = req.query;
 
     // Build filter object
@@ -87,14 +87,12 @@ router.get('/all-product', async (req, res) => {
       sortOption = { createdAt: -1 };
     }
 
-    // Pagination
-    const skip = (Number(page) - 1) * Number(limit);
+
 
     // Execute query
     const products = await Product.find(filter)
       .sort(sortOption)
-      .skip(skip)
-      .limit(Number(limit))
+   
     // .populate('category', 'name')
     // .populate('subcategory', 'name')
     // .populate('colors', 'name code')
@@ -110,9 +108,7 @@ router.get('/all-product', async (req, res) => {
       products,
       pagination: {
         total,
-        page: Number(page),
-        limit: Number(limit),
-        pages: Math.ceil(total / Number(limit))
+ 
       }
     });
   } catch (error) {
