@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from '../../redux/slices/user-slice'
+import sidebarLogo from "../../Images/logo-white.jpg";
 
 const Page = () => {
   // State Variables
@@ -200,7 +201,7 @@ const Page = () => {
       {/* Sidebar */}
       <div className={`sidebar ${isSidebarOpen ? "active" : ""}`}>
         <div className="close-btn" onClick={toggleSidebar}>
-          <Image src={logo} width={100} alt="logo-main" />
+          <Image className="sidebar-logo" src={sidebarLogo}  alt="logo-main" />
           <i className="bi bi-x-octagon"></i>
         </div>
         <ul>

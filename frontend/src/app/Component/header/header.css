@@ -68,6 +68,13 @@
   width: 33.33%;
 }
 
+
+.sidebar-logo{
+  width: 90%;
+  height: auto;
+  mix-blend-mode: color-dodge;
+}
+
 /* Sidebar Styling */
 .sidebar {
   position: fixed;
