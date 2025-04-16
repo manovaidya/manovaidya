@@ -57,7 +57,6 @@ const Page = ({ title }) => {
   }, []);
 
   console.log(products, "PRODUCTS")
-
   const settings = {
     autoplay: true,
     dots: false,
@@ -140,10 +139,10 @@ const Page = ({ title }) => {
           <div className="row">
             {products?.map((kit, index) => (
               <div className="col-md-6 col-6 col-lg-4" key={index}>
-                <div className="product-card">
-                  <div className="row align-items-center">
-                    <div className="col-md-4">
-                      <Link href={`/Pages/products/${kit?._id}`}>
+                <Link className="pruduct-link-all" href={`/Pages/products/${kit?._id}`}>
+                  <div className="product-card">
+                    <div className="row align-items-center">
+                      <div className="col-md-4">
                         <img
                           src={`${serverURL}/uploads/products/${kit?.productImages[0]}`}
                           alt={kit?.title}
@@ -152,32 +151,32 @@ const Page = ({ title }) => {
                           height={200}
                           style={{ cursor: "pointer", borderRadius: '8px' }}
                         />
-                      </Link>
-                    </div>
-                    <div className="col-md-8">
-                      <div className="product-card-details">
-                        <h5>{kit?.productName}</h5>
-                        <span className="descrip">
-                          {Parser().parse(kit?.productDescription)}</span>
-                        <div className="detail-sec">
-                          <p className="off-price m-0">
-                            <b style={{ fontSize: "14px" }}>
-                              {kit?.variant[0]?.discountPrice} % off
-                            </b>
-                          </p>
-                          <span className="final-price">
-                            <strong>₹ {kit?.variant[0]?.finalPrice}</strong>
-                          </span>
-                          <p className="del-mrp">
-                            MRP: <del>
-                              ₹ {kit?.variant[0]?.price}
-                            </del>
-                          </p>
+                      </div>
+                      <div className="col-md-8">
+                        <div className="product-card-details">
+                          <h5>{kit?.productName}</h5>
+                          <span className="descrip">
+                            {Parser().parse(kit?.productDescription)}</span>
+                          <div className="detail-sec">
+                            <p className="off-price m-0">
+                              <b style={{ fontSize: "14px" }}>
+                                {kit?.variant[0]?.discountPrice} % off
+                              </b>
+                            </p>
+                            <span className="final-price">
+                              <strong>₹ {kit?.variant[0]?.finalPrice}</strong>
+                            </span>
+                            <p className="del-mrp">
+                              MRP: <del>
+                                ₹ {kit?.variant[0]?.price}
+                              </del>
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>

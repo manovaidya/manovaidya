@@ -36,13 +36,10 @@
 }
 .tips-detail-card {
   background-color: white;
-  padding: 1rem;
+  padding: 0rem;
   border-radius: 1rem;
 }
-/* .tips-product-page .row{
-    display: flex;
-    justify-content: center;
-} */
+
 .tips-detail-card .title {
   font-size: 14px;
 }

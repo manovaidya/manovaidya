@@ -60,11 +60,10 @@ const BlogPage = () => {
                   <div
                     className="blog-desc"
                     style={{
-                      lineHeight: "1.8",
+                      lineHeight: "1.2",
                       fontSize: "18px",
                       color: "#555",
-                      marginBottom: "30px",
-                      padding: "0 10px",
+                      marginBottom: "10px",
                       textAlign: "justify",
                       display: "-webkit-box",
                       WebkitBoxOrient: "vertical",
@@ -72,10 +71,10 @@ const BlogPage = () => {
                       WebkitLineClamp: 2,
                     }}
                   >
-                    {parse(truncateText(item?.description || "", 250))}
+                    {parse(truncateText(item?.description || "", 100))}
                   </div>
 
-                  {item?.description?.length > 250 && (
+                  {item?.description?.length > 1 && (
                     <Link href={`blog/${item?._id}`} className="read-more-link">
                       Read More →
                     </Link>

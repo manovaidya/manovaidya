@@ -87,15 +87,14 @@ const Page = () => {
           >
             {products?.map((item, index) => (
               <SwiperSlide key={index}>
-                <div className="product-slider-card h-100">
-                  <Link href={`/Pages/products/${item?._id}`}>
+                <div className="product-slider-card">
+                  <Link className="pruduct-link-all" href={`/Pages/products/${item?._id}`}>
                     <img
                       src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
                       alt={item?.productName}
-                      className="product-slider-image w-100 rounded-2"
+                      className="product-slider-image"
                       style={{ height: '200px', objectFit: 'cover' }}
                     />
-                  </Link>
                   <div className="product-slider-details">
                     <h5 className="product-name fw-semibold">{truncateText(item?.productName, 18)}</h5>
                     <p
@@ -132,6 +131,7 @@ const Page = () => {
                       </p>
                     </div>
                   </div>
+                  </Link>
                 </div>
               </SwiperSlide>
             ))}

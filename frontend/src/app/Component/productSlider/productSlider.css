@@ -24,13 +24,6 @@
   position: relative;
 }
 
-.product-slider-card {
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
 
 .product-slider-image {
@@ -38,6 +31,7 @@
   height: 150px;
   object-fit: cover;
   cursor: pointer;
+  border-radius: 14px 14px 0 0;
 }
 
 .product-slider-details {
@@ -73,18 +67,7 @@
   margin: 0;
 }
 
-.product-slider-rating {
-  font-size: 12px;
-  color: #ffc107;
-  display: flex;
-  align-items: center;
-  margin: 0;
-}
 
-.product-slider-rating i {
-  margin-left: 0.3rem;
-  color: #ffc107;
-}
 
 .manovedya-hero-about {
   padding: 1rem 1rem;
@@ -155,9 +138,6 @@
     font-size: 1.9rem;
   }
 
-  .product-slider-card{
-    width: 100%;
-  }
   .product-slider {
     padding: 2rem 0rem;
     background: #f9f9f9;
@@ -175,11 +155,7 @@
   .product-slider-footer {
     display: block;
   }
-  .product-slider-rating {
-    font-size: 12px;
-    margin: 0;
-    justify-content: end;
-  }
+
   .product-slider-price {
     margin: 0;
     font-size: 22px;
