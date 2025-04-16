@@ -211,6 +211,7 @@ const AddProduct = () => {
               onChange={handleFileChange}
               required
             />
+                <small className="text-danger">Select up to 4 images.</small>
           </div>
 
           {/* Product Name */}
@@ -463,7 +464,7 @@ const AddProduct = () => {
                   multiple
                   onChange={handleImageChange}
                 />
-                <small className="text-muted">Select up to 4 images.</small>
+                <small className="text-danger">Select up to 4 images.</small>
               </div>
             </div>
           </div>
