@@ -30,6 +30,7 @@
   height: 335px;
   width: 250px;
   object-fit: cover;
+  border-radius: 20px;
 }
 
 /* Positioning */
@@ -111,7 +112,7 @@
 
 
 .top-cards {
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
@@ -132,13 +133,13 @@
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
-  height: 100%;
   border-radius: 8px;
+  margin-bottom: 0.6rem;
 }
 
 .card-main:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .card-image {
@@ -148,6 +149,7 @@
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
+
 
 .card-title {
   font-size: 1rem;
@@ -193,7 +195,7 @@
 }
 
 .product-card-details h5 {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--purple);
   font-weight: 700;
   margin-bottom: 5px;
@@ -293,7 +295,7 @@
 
 .card-content p {
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .Mental-card-main:hover .card-img-top {
@@ -301,8 +303,8 @@
 }
 
 .health-card-image {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
   padding: 0px;
   transition: transform 0.3s ease-in-out;
@@ -337,10 +339,11 @@
   }
 
   .card-image {
-    width: 120px;
-    height: 100px;
+    width: 100%;
+    height: 200px;
     object-fit: scale-down;
     margin: 0;
+    border-radius: 8px;
   }
 
   .top-cards {
@@ -365,6 +368,10 @@
   }
 
   .product-card-details h5 {
+    font-size: 16px;
+  }
+
+  .disease-responsive{
     font-size: 14px;
   }
 

@@ -64,7 +64,26 @@ const Page = ({ title }) => {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 3,
+    responsive: [
+      {
+        breakpoint: 1024, // for tablets and smaller desktops
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          infinite: true,
+        },
+      },
+      {
+        breakpoint: 768, // for mobile devices
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+        },
+      },
+    ],
   };
+
   return (
     <>
 
@@ -91,11 +110,11 @@ const Page = ({ title }) => {
         </a>
       </section>
 
-      <section className="top-cards">
-        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)' }}>Explore By Diseases</h2>
+      <section id="explore-by-diseases" className="top-cards">
+        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem' }}>Explore By Diseases</h2>
         <div className="cards-container">
           {categories?.map((categorie, index) => (
-            <Link href={`/Pages/product-tips/${categorie?._id}`} key={index}>
+            <Link className="text-decoration-none" href={`/Pages/product-tips/${categorie?._id}`} key={index}>
               <div data-aos="fade-up" className="card-main">
                 <img
                   src={`${serverURL}/uploads/categorys/${categorie.image}`}
@@ -103,18 +122,20 @@ const Page = ({ title }) => {
                   className="hero-cardDieses"
                 />
               </div>
+              <p style={{ color: 'black', fontWeight: '600' }}>{categorie?.categoryName}</p>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="top-cards-slider">
+      <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem' }}>Explore By Diseases</h2>
         <div className="container">
           <div className="slider-container">
             <Slider {...settings}>
               {categories?.map((card, index) => (
                 <div className="card-slide" key={index}>
-                  <Link href={`/Pages/product-tips/${card?._id}`}>
+                  <Link className="text-decoration-none" href={`/Pages/product-tips/${card?._id}`}>
                     <div className="card-main">
                       <img
                         src={`${serverURL}/uploads/categorys/${card.image}`}
@@ -123,7 +144,7 @@ const Page = ({ title }) => {
                         width={300}
                         height={200}
                       />
-                      {/* <h3 className="card-title">{card.name}</h3> */}
+                      <p className="disease-responsive" style={{ color: 'black', fontWeight: '600' }}>{card?.categoryName}</p>
                     </div>
                   </Link>
                 </div>

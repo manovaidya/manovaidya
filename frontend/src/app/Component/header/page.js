@@ -61,6 +61,7 @@ const Page = () => {
     { name: "Home", link: "/" },
     { name: "About Us", link: "/Pages/aboutUs" },
     { name: "Products", link: "/Pages/products" },
+    { name: "explore-By-Diseases", link: "#explore-by-diseases" },
     { name: "Blog", link: "/Pages/blog" },
     { name: "Mind Health Self-Test", link: "/Pages/mind-health" },
     { name: "Consultation & Customized Solution", link: "/Pages/consultationCustomizedSolution" },
