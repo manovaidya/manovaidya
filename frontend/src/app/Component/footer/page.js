@@ -12,11 +12,6 @@ const page = () => {
             {/* Follow Us Section */}
             <div className="col-md-4">
               <h5>Follow Us</h5>
-              <ul className="list-unstyled">
-                <li>MANOVAIDYA All Rights Reserved © 2024</li>
-                <li>C 7, Block C, Sector 12,</li>
-                <li>Noida, Uttar Pradesh 201301</li>
-              </ul>
               <div className="social-icons">
                 <a href="#" className="text-dark">
                   <i className="bi bi-facebook"></i>
@@ -24,7 +19,7 @@ const page = () => {
                 <a href="#" className="text-dark">
                   <i className="bi bi-youtube"></i>
                 </a>
-              </div>    
+              </div>
             </div>
 
             {/* Categories Section */}
@@ -90,8 +85,17 @@ const page = () => {
         </div>
       </footer>
       <div className="bottom-footer">
-        © 2024 MANOVAIDYA All Rights Reserved.
+        © {new Date().getFullYear()} MANOVAIDYA All Rights Reserved. by{" "}
+        <a
+          style={{ color: 'var(--yellow)', textDecoration: 'none' }}
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.digiindiasolutions.com/"
+        >
+          Digi India Solutions
+        </a>
       </div>
+
     </>
   );
 };

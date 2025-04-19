@@ -97,7 +97,7 @@ const Page = ({ searchParams }) => {
         </p>
         <div className="row">
           {products.map((item) => (
-            <div key={item._id} className="col-md-3 col-6 mb-4">
+            <div key={item._id} className="col-md-3 col-6 mb-2" style={{padding:'5px'}}>
               <div className="product-slider-card">
               <Link className="text-black text-decoration-none" href={`/Pages/products/${item?._id}`}>
                 <div data-aos="zoom-in" className="product-card p-0">

@@ -10,10 +10,11 @@
 
 .product-name {
   font-size: 20px;
+  color: var(--purple) !important;
 }
 
 .product-name:hover {
-  color: var(--purple);
+  color: var(--yellow);
 }
 
 .product-desc {
@@ -101,7 +102,7 @@
 }
 
   .product-name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
   }
 

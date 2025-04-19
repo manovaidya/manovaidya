@@ -66,9 +66,9 @@ const Page = () => {
 
   return (
     <>
-      <section className="product-slider py-5">
+      <section className="product-slider py-3">
         <div className="container">
-          <h2 className="product-slider-title text-center mb-3">Ayurvedic Products</h2>
+          <h2 className="product-slider-title text-center mb-3" >Ayurvedic Products</h2>
           <p className="product-slider-subtitle text-center mb-4">
             Explore our range of natural, herbal, and ayurvedic products for a healthier lifestyle.
           </p>
@@ -93,7 +93,7 @@ const Page = () => {
                       src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
                       alt={item?.productName}
                       className="product-slider-image"
-                      style={{ height: '200px', objectFit: 'cover' }}
+                      style={{ height: '250px', objectFit: 'cover' }}
                     />
                   <div className="product-slider-details">
                     <h5 className="product-name fw-semibold">{truncateText(item?.productName, 18)}</h5>
