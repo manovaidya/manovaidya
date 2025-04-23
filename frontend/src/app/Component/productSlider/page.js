@@ -121,10 +121,10 @@ const Page = () => {
                             {item?.variant[0]?.discountPrice} % off
                           </b>
                         </p>
-                        <p className="product-slider-rating">
+                        {/* <p className="product-slider-rating">
                           {getProductRating(item?._id)} <i className="bi bi-star-fill"></i> (
                           {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   </Link>
