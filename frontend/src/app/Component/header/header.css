@@ -28,11 +28,19 @@
 .login-cart {
   display: flex;
   justify-content: end;
-  gap: 20px;
+  gap: 10px;
+  align-items: baseline;
 }
+
+.cart-icon{
+  font-size: 22px;
+  cursor: pointer;
+}
+
 .login-cart a {
   color: black;
   text-decoration: none;
+  font-size: 20px;
 }
 .searchbar {
   position: relative;
@@ -49,7 +57,7 @@
   justify-content: center !important;
 }
 .nav-item .nav-link {
-  font-size: 18px;
+  font-size: 16px;
   color: black;
   font-weight: 500;
 }
@@ -250,6 +258,13 @@ font-size: 12px;
 
 /* Responsive Styling */
 @media only screen and (max-width: 768px) {
+  .cart-icon{
+    font-size: 18px;
+  }
+  .login-cart a {
+    font-size: 18px;
+  }
+
   .top-nav {
     font-size: 10px;
   }

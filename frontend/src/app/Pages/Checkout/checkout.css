@@ -24,6 +24,14 @@
   .checkout-form .address-fields select {
     flex: 1;
   }
+
+  .name-fields input{
+    width: 100%;
+  }
+
+  .allstates{
+    width: 50%;
+  }
   
   .checkout-form .section-title {
     font-size: 18px;

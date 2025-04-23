@@ -20,7 +20,6 @@ import { useDispatch } from "react-redux";
 import { login } from '../../../redux/slices/user-slice'
 import { toast, ToastContainer } from "react-toastify";
 import { formatDate } from "@/app/constant";
-
 const Page = ({ params }) => {
   // Unwrap the params with React.use()
   const dispatch = useDispatch()
@@ -109,9 +108,11 @@ const Page = ({ params }) => {
         title: "Item Already in Cart!",
         text: "This item is already in your cart.",
         icon: "info",
-        confirmButtonText: "Okay",
+        confirmButtonText: "Go to Cart",
       }).then(() => {
-        setButtonText("Go to Cart");
+        router.push('/Pages/cart/id');
+        // setButtonText.router.push('/Pages/cart/id')
+        // setButtonText("Okay");
       })
     } else {
       let body = { userId: User_data?._id, productId: product?._id, quantity, item };
@@ -126,9 +127,9 @@ const Page = ({ params }) => {
         title: "Item Added!",
         text: "Your item has been added to the cart.",
         icon: "success",
-        confirmButtonText: "Okay",
+        confirmButtonText: "Go to Cart",
       }).then(() => {
-        setButtonText("Go to Cart");
+        setButtonText("Okay");
       });
     }
   };
@@ -234,11 +235,7 @@ const Page = ({ params }) => {
                     <img
                       src={`${serverURL}/uploads/products/${image}`}
                       alt={`Slide ${index + 1}`}
-                      style={{
-                        width: "100%",
-                        height: "400px",
-                        objectFit: "fill",
-                      }}
+                      className="product-details-image"
                     />
                   </div>
                 ))}
@@ -307,8 +304,8 @@ const Page = ({ params }) => {
                       <div className="col-md-4 col-6" key={index}>
                         <div
                           className={`product-detail-card ${selectedIndex === index ? "selected" : ""}`}
-                          onClick={() => handleSelect(index, item)}
-                        >
+                          onClick={() => handleSelect(index, item)}>
+                            <div className="product-detail-card-content">
                           {selectedIndex === index && <span className="tick-mark">✔</span>}
                           <p className="smrini-duration">{item?.duration}</p>
                           <p className="smrini-bottle">{item?.bottle}</p>
@@ -320,6 +317,9 @@ const Page = ({ params }) => {
                           <p className="smrini-discount">{item?.discountPrice}% Off</p>
                           <p className="smrini-taxes">{item?.tex} Taxes</p>
                           <p className="smrini-saving">Save ₹ {item?.savings}</p>
+                          </div>
+                          <p className="smrini-bestseller">Bestseller</p>
+
                         </div>
                       </div>
                     ))}

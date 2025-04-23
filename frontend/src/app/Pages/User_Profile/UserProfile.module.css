@@ -69,7 +69,7 @@
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 800px;
   margin-top: 20px;
@@ -125,24 +125,28 @@
 }
 
 .active {
-  background-color: #2a72c1; /* Active state with a deeper blue */
+  background-color: #2a72c1;
+  /* Active state with a deeper blue */
   color: white;
 }
 
 .sidebarItem:active {
-  background-color: #1d6c98; /* Slightly darker blue for active state */
+  background-color: #1d6c98;
+  /* Slightly darker blue for active state */
 }
-.tabletd{
+
+.tabletd {
   padding: 10px;
 }
 
 @media only screen and (max-width:768px) {
   .sidebarItem {
-    padding: 5px 10px;
+    padding: 0px 0px;
     font-size: 12px;
-    height: 100%;
+    color: white;
     width: 100%;
   }
+
   .sidebar {
     position: fixed;
     width: 100%;
@@ -151,15 +155,23 @@
     right: 0;
     bottom: 0;
     gap: 10px;
+    background-color: var(--purple);
     align-items: end;
+    border-radius: 0;
+    padding: 10px 0px;
   }
+
   .table {
     padding: 0px;
     border-radius: 5px;
-    box-shadow:none !important;
+    box-shadow: none !important;
     overflow: overlay;
   }
 
+  .active {
+    color: black;
+    background-color: transparent;
+  }
 
-  
+
 }

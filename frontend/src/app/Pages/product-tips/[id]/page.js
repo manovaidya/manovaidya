@@ -185,10 +185,10 @@ const page = ({ params }) => {
                         </h5>
                         <p>
                             {Parser().parse(categories?.description)}
-                            {/* Finding the perfect solution for your sleep and relaxation needs is
-                            essential for a healthy and balanced life. Here’s a guide to help
-                            you decide which product suits you best. */}
                         </p>
+                        <button className="bynowbtn" style={{maxWidth:'fit-content'}}>
+                            Connect Our Community
+                        </button>
                     </div>
                 </div>
             </section>

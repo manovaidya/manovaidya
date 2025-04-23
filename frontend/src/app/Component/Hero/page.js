@@ -57,13 +57,28 @@ const Page = ({ title }) => {
   }, []);
 
   console.log(products, "PRODUCTS")
+  const CustomNextArrow = ({ onClick }) => (
+    <div className="custom-slider-arrow custom-next-arrow" onClick={onClick}>
+      <i class="bi bi-arrow-right"></i>
+    </div>
+  );
+
+  const CustomPrevArrow = ({ onClick }) => (
+    <div className="custom-slider-arrow custom-prev-arrow" onClick={onClick}>
+      <i className="bi bi-arrow-left"></i>
+    </div>
+  );
+
   const settings = {
     autoplay: true,
     dots: false,
     infinite: true,
+    arrow: true,
     speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 3,
+    slidesToShow: 5,
+    nextArrow: <CustomNextArrow />,
+    prevArrow: <CustomPrevArrow />,
+    slidesToScroll: 1,
     responsive: [
       {
         breakpoint: 1024, // for tablets and smaller desktops
@@ -83,6 +98,7 @@ const Page = ({ title }) => {
       },
     ],
   };
+
 
   return (
     <>
@@ -110,8 +126,8 @@ const Page = ({ title }) => {
         </a>
       </section>
 
-      <section id="explore-by-diseases" className="top-cards">
-        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem' }}>Explore By Diseases</h2>
+      {/* <section id="explore-by-diseases" className="top-cards">
+        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem' }}>Explore Our Treatments by Health Condition</h2>
         <div className="cards-container">
           {categories?.map((categorie, index) => (
             <Link className="text-decoration-none" href={`/Pages/product-tips/${categorie?._id}`} key={index}>
@@ -126,11 +142,11 @@ const Page = ({ title }) => {
             </Link>
           ))}
         </div>
-      </section>
+      </section> */}
 
       <section className="top-cards-slider">
-      <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem' }}>Explore By Diseases</h2>
-        <div className="container">
+        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem', marginTop: '1rem' }}>Explore Our Treatments by Health Condition</h2>
+        <div className="container-fluid" style={{ overflow: 'hidden' }}>
           <div className="slider-container">
             <Slider {...settings}>
               {categories?.map((card, index) => (
@@ -151,6 +167,7 @@ const Page = ({ title }) => {
               ))}
             </Slider>
           </div>
+
         </div>
       </section>
 
@@ -170,7 +187,7 @@ const Page = ({ title }) => {
                           className="card-img-top"
                           width={200}
                           height={200}
-                          style={{ cursor: "pointer", borderRadius: '8px' }}
+                          style={{ cursor: "pointer", borderRadius: '14px 14px 0px 0px' }}
                         />
                       </div>
                       <div className="col-md-8">
@@ -185,7 +202,7 @@ const Page = ({ title }) => {
                               </b>
                             </p>
                             <span className="final-price">
-                              <strong>₹ {kit?.variant[0]?.finalPrice}</strong>
+                              ₹ {kit?.variant[0]?.finalPrice}
                             </span>
                             <p className="del-mrp">
                               MRP: <del>
@@ -244,3 +261,4 @@ const Page = ({ title }) => {
 };
 
 export default Page;
+

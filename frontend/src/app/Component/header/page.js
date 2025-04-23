@@ -136,7 +136,7 @@ const Page = () => {
         <div className="container">
           <div className="nav-logo-section">
             <div className="nav-menu-search">
-              <i onClick={toggleSidebar} style={{ cursor: "pointer" }} className="bi bi-list"></i>
+              <i onClick={toggleSidebar} style={{ cursor: "pointer" , fontSize:'22px'}} className="bi bi-list"></i>
               <div className="searchbar">
                 <input type="text" onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search" className="form-control m-0" />
                 <i className="bi bi-search"></i>
@@ -149,8 +149,8 @@ const Page = () => {
             </div>
             {userToken ? (
               <div className="login-cart">
-                <Link href="/Pages/User_Profile">Profile</Link>
-                <i onClick={cartToggle} style={{ cursor: "pointer" }} className="bi bi-cart3"></i>
+                <Link href="/Pages/User_Profile">Profile</Link> |
+                <i onClick={cartToggle} className="bi bi-cart3 cart-icon"></i>
               </div>
             ) : (
               <div className="login-cart">
@@ -193,8 +193,8 @@ const Page = () => {
             <div onClick={() => userData?._id ? cart.length > 0 ? router.push(`/Pages/Checkout/${userData?._id}`) : router.push(`/Pages/products`) : router.push(`/Pages/Login`)} >
               <button className="checkout-btn">CHECKOUT</button>
             </div>
-            <div onClick={() => router.push(`/Pages/products`)}></div>
-            <button className="shop-more-btn">SHOP MORE</button>
+            {/* <div onClick={() => router.push(`/Pages/products`)}></div> */}
+            <button onClick={() => router.push(`/Pages/products`)} className="shop-more-btn">SHOP MORE</button>
           </div>
         </div>
       </div>

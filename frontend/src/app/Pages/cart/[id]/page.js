@@ -88,7 +88,7 @@ const CartPage = ({ params }) => {
             <div className="row">
                 <div className="col-md-8">
                     <div className="cart-item-data-container" >
-                        <h4>Cart Items</h4>
+                        <h4 className="m-0">Cart Items</h4>
                         <hr />
                         {cart?.length === 0 ? (
                             <div className="text-center">
@@ -108,58 +108,42 @@ const CartPage = ({ params }) => {
                                     style={{ margin: "5px 0px" }}
                                     key={item?._id}
                                 >
-                                    <div className="cart-product-image" style={{ width: "15%" }}>
+                                    <div className="cart-product-image" style={{ width: "100%" }}>
                                         <img
                                             src={`${serverURL}/uploads/products/${item?.product?.productImages[0]}`}
                                             alt={item?.product?.productName}
                                         />
                                     </div>
-                                    <div style={{ width: "30%" }}>
+                                    <div style={{ width: "100%" }}>
                                         <h4>{item?.product?.productName}</h4>
                                     </div>
                                     <div
                                         style={{
                                             display: "flex",
-                                            width: "10%",
-                                            justifyContent: "space-between",
+                                            width: "100%",
+                                            justifyContent: "center",
+                                            gap:'10px',
+                                            alignItems:'center'
                                         }}
                                     >
                                         <button
-                                            style={{
-                                                padding: 5,
-                                                fontWeight: 500,
-                                                fontSize: "1.5rem",
-                                                background: "#a665b3",
-                                                border: "none",
-                                                borderRadius: "5px",
-                                                color: "#fff",
-                                            }}
                                             onClick={() => updateQuantity("decrement", index)}
                                             disabled={item?.quantity <= 1}
                                             className="quantity"
                                         >
                                             &#8722;
                                         </button>
-                                        <span style={{ padding: 5, fontWeight: 500, fontSize: "1.5rem" }}>
+                                        <span>
                                             {item?.quantity}
                                         </span>
                                         <button
-                                            style={{
-                                                padding: 5,
-                                                fontWeight: 500,
-                                                fontSize: "1.5rem",
-                                                background: "#a665b3",
-                                                border: "none",
-                                                borderRadius: "5px",
-                                                color: "#fff",
-                                            }}
                                             className="quantity"
                                             onClick={() => updateQuantity("increment", index)}
                                         >
                                             &#43;
                                         </button>
                                     </div>
-                                    <div className="cart-product-price" style={{ width: "18%" }}>
+                                    <div className="cart-product-price" style={{ width: "100%" }}>
                                         <h4>₹{(parseFloat(JSON.parse(item?.item)?.finalPrice) * item?.quantity).toFixed(2)}</h4>
                                     </div>
                                     <div className="cart-product-delete">

@@ -8,6 +8,7 @@ import Slider from "react-slick";
 import { formatDate } from "@/app/constant";
 import { toast, ToastContainer } from "react-toastify";
 import ReviewSection from "../../review/page";
+import Link from "next/link";
 
 const page = ({ params }) => {
     const { id } = use(params);
@@ -97,6 +98,7 @@ const page = ({ params }) => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         const user_token = localStorage.getItem('token')
         setUser_token(user_token)
 
@@ -204,17 +206,19 @@ const page = ({ params }) => {
                                     calculateTotalScore();
                                 }}
                             >
+                                <Link className="text-decoration-none text-white" href='#testresults'>
                                 Submit Test
+                                </Link>
                             </button>
                         </div>
                     </div>
                 </section>
             ) : (
-                <section className="container py-5">
-                    <h2 className="text-center mb-4">Your Anxiety Test Results</h2>
+                <section id="testresults" className="container py-5">
+                    <h2 className="text-center mb-4">Your {testData?.addHeaderTitle} Test Results</h2>
                     <div className={`result-box ${category.toLowerCase()} p-4 rounded shadow-sm`}>
                         <h3 className="text-uppercase">{category} Category</h3>
-                        <p>Your symptoms suggest {category} anxiety.</p>
+                        <p>Your symptoms suggest {category} {testData?.addHeaderTitle}</p>
                         <p>Total Score: {totalScore} / 100</p>
                         <p><strong>Recommendation:</strong> {recommendation}</p>
                         <button

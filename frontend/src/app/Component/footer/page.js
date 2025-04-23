@@ -1,9 +1,29 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Footer.css";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { getData } from "@/app/services/FetchNodeServices";
 
 const page = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getData('api/categories/get-All-category');
+        if (response.success === true) {
+          const activecategories = response?.categories.filter(categorie => categorie.isActive === true);
+          setCategories(activecategories);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <>
       <footer className="footer">
@@ -25,12 +45,17 @@ const page = () => {
             {/* Categories Section */}
             <div className="col-md-4">
               <h5>Categories</h5>
-              <ul className="list-unstyled">
-                <li>Wellness Kits</li>
-                <li>Mind Health</li>
-                <li>Conditions</li>
-                <li>Cognitive Function</li>
-              </ul>
+              <div className="footer-category-list">
+                <ul className="list-unstyled">
+                {categories?.map((categorie, index) => (
+                  <li key={index}>
+                  <Link className="text-decoration-none" href={`/Pages/product-tips/${categorie?._id}`} key={index}>
+                  <i className="bi bi-arrow-right-circle"></i> {categorie?.categoryName}
+                  </Link>
+                  </li>
+                ))}
+                </ul>
+              </div>
             </div>
 
             {/* Terms & Condition Section */}
@@ -39,20 +64,25 @@ const page = () => {
               <ul className="list-unstyled">
                 <li>
                   <Link href={"/Pages/contactUs"}>
-                    Contact Us
+                  <i className="bi bi-arrow-right-circle"></i> Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/Pages/blog"}>
+                  <i className="bi bi-arrow-right-circle"></i> Blog
                   </Link>
                 </li>
                 <li>
                   <Link href={"/Pages/terms-conditions"}>
-                    Term & Conditions's
+                  <i className="bi bi-arrow-right-circle"></i> Term & Conditions's
                   </Link>
                 </li>
                 <li>
-                  <Link href={"/Pages/privacy-policy"}>Privacy Policy</Link>
+                  <Link href={"/Pages/privacy-policy"}><i className="bi bi-arrow-right-circle"></i> Privacy Policy</Link>
                 </li>
                 <li>
                   <Link href={"/Pages/return-and-refund-policy"}>
-                    Return/Refund Policy
+                  <i className="bi bi-arrow-right-circle"></i> Return/Refund Policy
                   </Link>
                 </li>
               </ul>

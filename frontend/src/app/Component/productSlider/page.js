@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/autoplay';
-
+import { Navigation } from 'swiper/modules';
 import Image from "next/image";
 import "./productSlider.css";
 import { getData, serverURL } from "@/app/services/FetchNodeServices";
@@ -72,17 +72,20 @@ const Page = () => {
           <p className="product-slider-subtitle text-center mb-4">
             Explore our range of natural, herbal, and ayurvedic products for a healthier lifestyle.
           </p>
-
           <Swiper
-            modules={[Autoplay]}
+            modules={[Autoplay, Navigation]}
             spaceBetween={10}
             slidesPerView={4}
             autoplay={{ delay: 4000, disableOnInteraction: false }}
+            navigation={{
+              nextEl: '.custom-swiper-button-next',
+              prevEl: '.custom-swiper-button-prev',
+            }}
             breakpoints={{
               0: { slidesPerView: 1 },
               576: { slidesPerView: 2 },
-              768: { slidesPerView: 3 },
-              1200: { slidesPerView: 4 },
+              768: { slidesPerView: 2 },
+              1200: { slidesPerView: 3 },
             }}
           >
             {products?.map((item, index) => (
@@ -93,49 +96,47 @@ const Page = () => {
                       src={`${serverURL}/uploads/products/${item?.productImages[0]}`}
                       alt={item?.productName}
                       className="product-slider-image"
-                      style={{ height: '250px', objectFit: 'cover' }}
                     />
-                  <div className="product-slider-details">
-                    <h5 className="product-name fw-semibold">{truncateText(item?.productName, 18)}</h5>
-                    <p
-                      className="product-desc text-muted small mb-2"
-                      style={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        // minHeight: '60px',
-                      }}
-                    >
-                      {Parser().parse(truncateText(item?.productSubDescription, 50))}
-                    </p>
-                    <div className="product-slider-footer">
-                      <div className="pro-sli">
-
-                        <p className="del-mrp">
-                          MRP: <del>
-                            ₹ {item?.variant[0]?.price}
-                          </del>
+                    <div className="product-slider-details">
+                      <h5 className="product-name fw-semibold">{truncateText(item?.productName, 18)}</h5>
+                      <p
+                        className="product-desc text-muted small mb-2"
+                        style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {Parser().parse(truncateText(item?.productSubDescription, 50))}
+                      </p>
+                      <div className="product-slider-footer">
+                        <div className="pro-sli">
+                          <p className="del-mrp">MRP: <del>₹ {item?.variant[0]?.price}</del></p>
+                          <p className="final-price"><strong>₹ {item?.variant[0]?.finalPrice}</strong></p>
+                        </div>
+                        <p className="off-price m-0">
+                          <b style={{ fontSize: "14px" }}>
+                            {item?.variant[0]?.discountPrice} % off
+                          </b>
                         </p>
-                        <p className="final-price"><strong> ₹ {item?.variant[0]?.finalPrice}</strong></p>
+                        <p className="product-slider-rating">
+                          {getProductRating(item?._id)} <i className="bi bi-star-fill"></i> (
+                          {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
+                        </p>
                       </div>
-                      <p className="off-price m-0">
-                        <b style={{ fontSize: "14px" }}>
-                          {item?.variant[0]?.discountPrice} % off
-                        </b>
-                      </p>
-                      <p className="product-slider-rating">
-                        {getProductRating(item?._id)} <i className="bi bi-star-fill"></i> (
-                        {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
-                      </p>
                     </div>
-                  </div>
                   </Link>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
+
+          {/* Arrows */}
+          <div className="custom-swiper-button-prev"><i className="bi bi-arrow-left"></i></div>
+          <div className="custom-swiper-button-next"><i className="bi bi-arrow-right"></i></div>
+
         </div>
       </section>
 
