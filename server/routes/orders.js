@@ -14,13 +14,11 @@ router.get('/get-all-orders', async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 10
     } = req.query;
 
-    const skip = (Number(page) - 1) * Number(limit);
 
     // Execute query
-    const orders = await Order.find({}).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).populate('user').populate('orderItems.productId');
+    const orders = await Order.find({}).sort({ createdAt: -1 }).populate('user').populate('orderItems.productId');
     console.log("orders", orders)
     // Get total count for pagination
     const total = await Order.countDocuments();
@@ -30,9 +28,6 @@ router.get('/get-all-orders', async (req, res) => {
       orders,
       pagination: {
         total,
-        page: Number(page),
-        limit: Number(limit),
-        pages: Math.ceil(total / Number(limit))
       }
     });
   } catch (error) {

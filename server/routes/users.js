@@ -16,7 +16,7 @@ const router = express.Router();
 // Get all users (admin only)
 router.get('/get-all-user', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search } = req.query;
+    const { search } = req.query;
 
     const filter = {};
 
@@ -28,12 +28,10 @@ router.get('/get-all-user', async (req, res) => {
       ];
     }
 
-    const skip = (Number(page) - 1) * Number(limit);
+  
 
     const users = await User.find(filter)
       .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(Number(limit))
       .select('-password');
 
     // Get total count for pagination
@@ -44,9 +42,7 @@ router.get('/get-all-user', async (req, res) => {
       users,
       pagination: {
         total,
-        page: Number(page),
-        limit: Number(limit),
-        pages: Math.ceil(total / Number(limit))
+      
       }
     });
   } catch (error) {
