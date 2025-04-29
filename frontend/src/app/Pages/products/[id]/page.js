@@ -385,6 +385,7 @@ const Page = ({ params }) => {
                             <p className="smrini-taxes" >{item?.tex}% Taxes</p>
                             <p className="smrini-saving">Save ₹ {(item?.price-item?.finalPrice).toFixed(2)}</p>
                           </div>
+                          
                           <p className="smrini-bestseller" style={{ background: `${item?.tagType?.tagColor}` }}>{item?.tagType?.tagName || "Best Seller"}</p>
 
                         </div>
