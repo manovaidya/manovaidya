@@ -376,14 +376,14 @@ const Page = ({ params }) => {
                           <div className="product-detail-card-content">
                             {selectedIndex === index && <span className="tick-mark">✔</span>}
                             <p className="smrini-duration">{item?.duration}</p>
-                            <p className="smrini-bottle">{item?.day}</p>
+                            <h1 className="smrini-price" style={{color:'#800080'}}>{item?.day}</h1>
                             <p className="smrini-bottle">{item?.bottle}</p>
                             <hr />
                             <p className="smrini-original-price">₹ <del>{item?.price}</del></p>
                             <p className="smrini-price">₹ {item?.finalPrice}</p>
                             <p className="smrini-discount">{item?.discountPrice}% Off</p>
-                            <p className="smrini-taxes">{item?.tex} Taxes</p>
-                            <p className="smrini-saving">Save ₹ {item?.savings}</p>
+                            <p className="smrini-taxes" >{item?.tex}% Taxes</p>
+                            <p className="smrini-saving">Save ₹ {(item?.price-item?.finalPrice).toFixed(2)}</p>
                           </div>
                           <p className="smrini-bestseller" style={{ background: `${item?.tagType?.tagColor}` }}>{item?.tagType?.tagName || "Best Seller"}</p>
 
