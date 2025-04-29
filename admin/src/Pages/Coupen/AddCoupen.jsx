@@ -57,7 +57,7 @@ const AddCoupon = () => {
                     <h4>Add Coupon</h4>
                 </div>
                 <div className="links">
-                    <Link to="/all-coupons" className="add-new">
+                    <Link to="/all-coupen" className="add-new">
                         Back <i className="fa-regular fa-circle-left"></i>
                     </Link>
                 </div>

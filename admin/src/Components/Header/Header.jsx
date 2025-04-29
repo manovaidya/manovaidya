@@ -19,6 +19,7 @@ const Header = () => {
     { to: "/", label: "Dashboard", icon: "fa-solid fa-gauge" },
     { to: "/all-orders", label: "Manage Orders", icon: "fa-solid fa-truck" },
     { to: "/All-Herbs-For-Natural", label: "All Herbs", icon: "fa-solid fa-leaf" },
+    { to: "/all-tags", label: "All Tag", icon: "fa-solid fa-boxes" },
     { to: "/all-products", label: "All Products", icon: "fa-solid fa-boxes" },
     { to: "/all-dieses", label: "All Diseases", icon: "fa-solid fa-virus" },
     { to: "/sub-diseases", label: "Sub Diseases", icon: "fa-solid fa-heartbeat" },

@@ -36,6 +36,7 @@ import newsLetterRoutes from "./routes/newsLetter.js";
 import consultVideoUrlRoutes from "./routes/consultVideoUrl.js"
 import testRouters from "./routes/test.js"
 import shiprocketRoutes from "./routes/shiprocket.js"
+import tagRoutes from "./routes/tags.js"
 
 dotenv.config();
 
@@ -101,6 +102,7 @@ app.use("/api/newsletter", newsLetterRoutes)
 app.use("/api/url", consultVideoUrlRoutes);
 app.use("/api/test", testRouters)
 app.use("/api/shiprocket", shiprocketRoutes)
+app.use("/api/tag", tagRoutes)
 
 // Database connection
 // mongoose.connect(process.env.MONGODB_URI)

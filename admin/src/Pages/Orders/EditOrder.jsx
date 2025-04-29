@@ -3,6 +3,95 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getData, postData, serverURL } from '../../services/FetchNodeServices';
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+
+
+const styles = StyleSheet.create({
+    page: { padding: 20, fontSize: 9, },
+    section: { marginBottom: 10, },
+    shipping: { fontSize: 12, fontWeight: 700, marginBottom: 10, },
+    header: { fontSize: 18, textAlign: "center", marginBottom: 20, },
+    table: { display: "table", width: "auto", marginVertical: 20, },
+    tableRow: { flexDirection: "row", },
+    tableCol: { borderStyle: "solid", borderWidth: 1, padding: 5, flex: 1, },
+    bold: { fontWeight: "bold", },
+    footer: { marginTop: 20, textAlign: "center", },
+});
+
+
+const InvoicePDF = ({ order }) => {
+    const [taxDetails, setTaxDetails] = useState([]);
+    console.log("order:--", order)
+    useEffect(() => {
+        const fetchTaxDetails = async () => {
+            const details = [];
+            for (const item of order?.orderItems || []) {
+                try {
+                    const product = item.productId;
+                    const variant = product.variant?.[0];
+                    const tax = Number(variant?.tex || 0);
+                    const price = Number(item?.price);
+                    details.push({ productName: product.productName, weight: `${item?.day}, ${item?.bottle}`, quantity: item?.quantity, tax, price });
+                } catch (error) {
+                    console.error("Error fetching product variant:", error);
+                    toast.error("Failed to load some product data.");
+                }
+            }
+            setTaxDetails(details);
+        };
+
+        fetchTaxDetails();
+    }, [order]);
+
+    const shipping = order.shippingAddress;
+
+    return (
+        <Document>
+            <Page size="A4" style={styles.page}>
+                <Text style={styles.header}>Manovaidya</Text>
+                <Text style={styles.shipping}>Shipping Details</Text>
+                <Text style={styles.section}>Order ID: {order?._id}</Text>
+                <Text style={styles.section}>Order Number: {order?.orderUniqueId}</Text>
+                <Text style={styles.section}>Customer Name: {shipping?.fullName}</Text>
+                <Text style={styles.section}>
+                    Address: {shipping?.addressLine1}, {shipping?.addressLine2}, {shipping?.city},{" "}
+                    {shipping?.state}, {shipping?.country} - {shipping?.pinCode}
+                </Text>
+                <Text style={styles.section}>Phone: {shipping?.phone}</Text>
+                <Text style={styles.section}>Order Date: {new Date(order?.createdAt).toLocaleString()}</Text>
+
+                <View style={styles.table}>
+                    <View style={[styles.tableRow, { backgroundColor: "#ddd" }]}>
+                        <Text style={[styles.tableCol, styles.bold]}>Product Name</Text>
+                        <Text style={[styles.tableCol, styles.bold]}>Weight</Text>
+                        <Text style={[styles.tableCol, styles.bold]}>Quantity</Text>
+                        <Text style={[styles.tableCol, styles.bold]}>Tax (%)</Text>
+                        <Text style={[styles.tableCol, styles.bold]}>Price (Excl. Tax)</Text>
+                        <Text style={[styles.tableCol, styles.bold]}>Final Price</Text>
+                    </View>
+                    {taxDetails.map((item, i) => {
+                        const priceExclTax = item.price / (1 + item.tax / 100);
+                        return (
+                            <View key={i} style={styles.tableRow}>
+                                <Text style={styles.tableCol}>{item.productName}</Text>
+                                <Text style={styles.tableCol}>{item.weight}</Text>
+                                <Text style={styles.tableCol}>{item.quantity}</Text>
+                                <Text style={styles.tableCol}>{item.tax.toFixed(2)}%</Text>
+                                <Text style={styles.tableCol}>₹{priceExclTax.toFixed(2)}</Text>
+                                <Text style={styles.tableCol}>₹{item.price.toFixed(2)}</Text>
+                            </View>
+                        );
+                    })}
+                </View>
+
+                <Text style={styles.section}>Shipping Cost: ₹{order.shippingAmount || 0}</Text>
+                <Text style={styles.section}>Total Amount: ₹{order.totalAmount}</Text>
+                <Text style={styles.footer}>Thank you for your order!</Text>
+            </Page>
+        </Document>
+    );
+};
+
 
 const EditOrder = () => {
     const { id } = useParams();
@@ -16,7 +105,7 @@ const EditOrder = () => {
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
-
+    console.log("length, breadth, height, weight, id", orderData.length, orderData.breadth, orderData.height, orderData.weight)
     // Fetch API data
     const getApiData = async () => {
         try {
@@ -83,7 +172,9 @@ const EditOrder = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await postData('api/shiprocket/shiped-order-shiprocket', { ...orderData, token });
+            let body = { length: orderData?.length, id, breadth: orderData.breadth, height: orderData.height, weight: orderData.weight }
+
+            const response = await postData('api/shiprocket/shiped-order-shiprocket', body);
 
             console.log(response)
             if (response?.success === true) {
@@ -96,6 +187,7 @@ const EditOrder = () => {
             toast.error(error?.response?.data?.msg);
         }
     };
+
 
 
     return (
@@ -119,8 +211,21 @@ const EditOrder = () => {
                         step === 1 && (
                             <> <div className="col-lg-8">
                                 <div className="card shadow-lg">
-                                    <div className="card-header bg-primary text-white">
+                                    <div className="card-header bg-primary text-white d-flex justify-content-between">
                                         <h5 className="card-title">Order Details</h5>
+                                        <PDFDownloadLink
+                                            document={<InvoicePDF order={orderData} />}
+                                            fileName={`Invoice_ ${orderData?.orderUniqueId}.pdf`}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {({ loading }) =>
+                                                loading ? (
+                                                    <button className="btn btn-secondary">Loading...</button>
+                                                ) : (
+                                                    <button className="btn btn-success">Download Invoice</button>
+                                                )
+                                            }
+                                        </PDFDownloadLink>
                                     </div>
                                     <div className="table-responsive">
                                         <table className="table table-bordered">

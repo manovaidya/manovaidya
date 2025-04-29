@@ -16,6 +16,7 @@ const EditTest = () => {
     themeColor: "#000",
     questions: [{ question: "" }],
     productUrl: [{ url: "", per: "" }],
+    videoUrl: [{ url: "" }],
   });
 
   // Fetch test data on mount
@@ -30,6 +31,7 @@ const EditTest = () => {
           themeColor: response.data.themeColor || "#000",
           questions: response.data.questions || [{ question: "" }],
           productUrl: response.data.productUrl || [{ url: "", per: "" }],
+          videoUrl: response.data.videoUrl || [{ url: '' }]
         });
       } else {
         toast.error("Test data not found");
@@ -59,6 +61,13 @@ const EditTest = () => {
     updatedQuestions[index][name] = value;
     setFormData((prevData) => ({ ...prevData, questions: updatedQuestions }));
   };
+
+  const handleFieldChange = (index, name, value, type) => {
+    const updatedData = [...formData[type]];
+    updatedData[index][name] = value;
+    setFormData((prevData) => ({ ...prevData, [type]: updatedData }));
+  };
+
 
   const handleUrlChange = (index, e) => {
     const { name, value } = e.target;
@@ -99,6 +108,24 @@ const EditTest = () => {
     const updatedUrls = [...formData.productUrl];
     updatedUrls.splice(index, 1);
     setFormData((prevData) => ({ ...prevData, productUrl: updatedUrls }));
+  };
+
+
+  const addField = (type, maxLimit, newItem) => {
+    if (formData[type].length < maxLimit) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [type]: [...prevData[type], newItem],
+      }));
+    } else {
+      toast.error(`You can add only ${maxLimit} ${type}.`);
+    }
+  };
+
+  const removeField = (type, index) => {
+    const updatedData = [...formData[type]];
+    updatedData.splice(index, 1);
+    setFormData((prevData) => ({ ...prevData, [type]: updatedData }));
   };
 
   const handleSubmit = async (e) => {
@@ -320,6 +347,43 @@ const EditTest = () => {
                       type="button"
                       className="btn btn-secondary"
                       onClick={addUrlField}
+                    >
+                      Add More
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="col-md-12">
+            <div className="head">
+              <h4>Doctor's Advice Video's URL</h4>
+            </div>
+            {formData.videoUrl.map((item, index) => (
+              <div key={index} className="row align-items-center">
+                <div className="col-md-8">
+                  <label htmlFor={`videoUrl-${index}`} className="form-label">
+                    {index + 1} Add URL
+                  </label>
+                  <input type="text" name="url" className="form-control" id={`videoUrl-${index}`} value={item.url} onChange={(e) => handleFieldChange(index, "url", e.target.value, "videoUrl")} required />
+                </div>
+                <div className="col-md-4">
+                  <br />
+                  {formData.videoUrl.length > 1 && (
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      onClick={() => removeField("videoUrl", index)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                  {index === formData.videoUrl.length - 1 && (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => addField("videoUrl", 4, { url: "" })}
                     >
                       Add More
                     </button>

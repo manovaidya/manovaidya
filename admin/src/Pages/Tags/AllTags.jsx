@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getData } from "../../services/FetchNodeServices";
 
 const AllTags = () => {
   const [tags, setTags] = useState([]);
@@ -13,13 +14,12 @@ const AllTags = () => {
   const fetchTags = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        "https://api.manovaidya.com/api/get-tags"
-      );
-      // console.log(response)
-      setTags(response.data.data); // Assuming the response data is an array of tags
+      const response = await getData("api/tag/get-all-tags");
+      console.log("response:-", response)
+      if (response?.status) {
+        setTags(response?.data);
+      }
     } catch (error) {
-      toast.error("Error fetching tags!");
     } finally {
       setIsLoading(false);
     }
@@ -37,11 +37,11 @@ const AllTags = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(
-            `https://api.manovaidya.com/api/delete-tags/${id}`
-          );
-          fetchTags(); // Refresh the tags list after deletion
-          Swal.fire("Deleted!", "Your tag has been deleted.", "success");
+          const response = await getData(`api/tag/delete-tags/${id}`);
+          if (response.status) {
+            fetchTags();
+            Swal.fire("Deleted!", "Your tag has been deleted.", "success");
+          }
         } catch (error) {
           Swal.fire("Error!", "There was an issue deleting the tag.", "error");
         }
@@ -68,15 +68,15 @@ const AllTags = () => {
         </div>
       </div>
 
-      <div className="filteration">
+      {/* <div className="filteration">
         <div className="selects">
-          {/* You can add sorting dropdown here if needed */}
+       
         </div>
         <div className="search">
           <label htmlFor="search">Search </label> &nbsp;
           <input type="text" name="search" id="search" />
         </div>
-      </div>
+      </div> */}
 
       <section className="main-table">
         <table className="table table-bordered table-striped table-hover">

@@ -136,7 +136,7 @@ const Page = () => {
         <div className="container">
           <div className="nav-logo-section">
             <div className="nav-menu-search">
-              <i onClick={toggleSidebar} style={{ cursor: "pointer" , fontSize:'22px'}} className="bi bi-list"></i>
+              <i onClick={toggleSidebar} style={{ cursor: "pointer", fontSize: '22px' }} className="bi bi-list"></i>
               <div className="searchbar">
                 <input type="text" onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search" className="form-control m-0" />
                 <i className="bi bi-search"></i>
@@ -148,14 +148,30 @@ const Page = () => {
               </Link>
             </div>
             {userToken ? (
-              <div className="login-cart">
-                <Link href="/Pages/User_Profile">Profile</Link> |
-                <i onClick={cartToggle} className="bi bi-cart3 cart-icon"></i>
+              <div className="d-flex  align-items-center login-cart">
+                <Link href="/Pages/User_Profile" className="text-decoration-none">
+                  Profile
+                </Link> |
+                <div className="d-flex align-items-center position-relative">
+                  <i onClick={cartToggle} className="bi bi-cart3 cart-icon fs-3" style={{ cursor: "pointer" }} ></i>
+                  <div
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-circle"
+                    style={{ backgroundColor: "#722f7f", color: "#fff", fontSize: "0.5rem", padding: "5px", }}>
+                    {cart?.length}
+                  </div>
+                </div>
               </div>
             ) : (
-              <div className="login-cart">
-                <Link href="/Pages/Login">Log in</Link>
-                <i onClick={cartToggle} style={{ cursor: "pointer" }} className="bi bi-cart3"></i>
+              <div className="d-flex  align-items-center login-cart">
+                <Link href="/Pages/Login" className="text-decoration-none">Log in</Link> |
+                <div className="d-flex align-items-center position-relative">
+                  <i onClick={cartToggle} className="bi bi-cart3 cart-icon fs-3" style={{ cursor: "pointer" }} ></i>
+                  <div
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-circle"
+                    style={{ backgroundColor: "#722f7f", color: "#fff", fontSize: "0.5rem", padding: "5px", }}>
+                    {cart?.length}
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -166,35 +182,83 @@ const Page = () => {
       <div className={`cartSidebar ${cartSidebar ? "active" : ""}`}>
         <div className="cart-close-btn">
           <h4>SHOPPING CART</h4>
-          <span onClick={cartToggle}><i className="bi bi-x-octagon"></i></span>
+          <span onClick={cartToggle}>
+            <i className="bi bi-x-octagon"></i>
+          </span>
         </div>
+
         <div className="shopping-cart">
           <div className="cart-item" style={{ flexDirection: "column" }}>
-            {cart?.map((item, index) => (
-              <div key={item._id} style={{ flexDirection: "column" }}>
-                <p className="m-0"><b>{item?.product?.productName}</b></p>
-                <p>{JSON.parse(item?.item)?.day} | {JSON.parse(item?.item)?.bottle} | ₹5 / tablet</p>
-                <p className="bestseller">⭐ Bestseller</p>
-                <p className="price">
-                  <span className="original-price">₹{JSON.parse(item?.item)?.price * item?.quantity}</span> ₹{JSON.parse(item?.item)?.finalPrice * item?.quantity}
-                </p>
-                <div className="quantity">
-                  <button disabled={item?.quantity <= 1} onClick={() => updateQuantity("decrement", index)} className="decrease">-</button>
-                  <span className="count">{item?.quantity}</span>
-                  <button onClick={() => updateQuantity("increment", index)} className="increase">+</button>
+            {cart?.map((item, index) => {
+              const parsedItem = JSON.parse(item?.item);
+
+              return (
+                <div key={item._id} style={{ marginBottom: "40px", borderBottom: "1px solid #eee", paddingBottom: "20px" }}>
+                  <p style={{ margin: '0 0 6px', fontWeight: 'bold', fontSize: '16px' }}>
+                    {item?.product?.productName}
+                  </p>
+
+                  <p style={{ margin: '4px 0', fontSize: '14px', color: '#555' }}>
+                    {parsedItem?.day} | {parsedItem?.bottle}
+                  </p>
+
+                  {/* Tag if needed */}
+                  {/* {parsedItem?.tagType?.tagName && (
+              <p className="bestseller">⭐ {parsedItem?.tagType?.tagName}</p>
+            )} */}
+
+                  <div className="price" style={{ margin: '8px 0', fontSize: '14px' }}>
+                    <span className="original-price" style={{ textDecoration: 'line-through', color: '#999', marginRight: '8px' }}>
+                      ₹ {(parsedItem?.price * item?.quantity).toFixed(2)}
+                    </span>
+                    <span style={{ color: '#e53935', fontWeight: 'bold' }}>
+                      ₹ {(parsedItem?.finalPrice * item?.quantity).toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '13px', color: '#777', marginBottom: '10px' }}>
+                    Save ₹{((parsedItem?.price - parsedItem?.finalPrice) * item?.quantity).toFixed(2)} |
+                    Discount {parsedItem?.discountPrice?.toFixed(2)}%
+                  </div>
+
+                  <div style={{ display: 'flex',  justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div  style={{display:'flex',alignItems:'center', width:'25%'}}>
+                      <button
+                        disabled={item?.quantity <= 1}
+                        onClick={() => updateQuantity("decrement", index)}
+                        className="decrease"
+                      >
+                        -
+                      </button>
+                      <span className="count">{item?.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity("increment", index)}
+                        className="increase"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button onClick={() => handleRemoveItem(item)} className="delete-btn mt-2">
+                      <i className="bi bi-trash" />
+                    </button>
+                  </div>
                 </div>
-                <button onClick={() => handleRemoveItem(item)} className="delete-btn mt-2">
-                  <i className="bi bi-trash" />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
           <div className="cart-footer">
-            <div onClick={() => userData?._id ? cart.length > 0 ? router.push(`/Pages/Checkout/${userData?._id}`) : router.push(`/Pages/products`) : router.push(`/Pages/Login`)} >
+            <div
+              onClick={() => {
+                if (userData?._id) { cart.length > 0 ? router.push(`/Pages/Checkout/${userData._id}`) : router.push(`/Pages/products`); } else { router.push(`/Pages/Login`); }
+              }}>
               <button className="checkout-btn">CHECKOUT</button>
             </div>
-            {/* <div onClick={() => router.push(`/Pages/products`)}></div> */}
-            <button onClick={() => router.push(`/Pages/products`)} className="shop-more-btn">SHOP MORE</button>
+
+            <button onClick={() => router.push(`/Pages/products`)} className="shop-more-btn">
+              SHOP MORE
+            </button>
           </div>
         </div>
       </div>
@@ -202,7 +266,7 @@ const Page = () => {
       {/* Sidebar */}
       <div className={`sidebar ${isSidebarOpen ? "active" : ""}`}>
         <div className="close-btn" onClick={toggleSidebar}>
-          <Image className="sidebar-logo" src={sidebarLogo}  alt="logo-main" />
+          <Image className="sidebar-logo" src={sidebarLogo} alt="logo-main" />
           <i className="bi bi-x-octagon"></i>
         </div>
         <ul>

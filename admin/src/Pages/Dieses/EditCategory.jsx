@@ -1,83 +1,123 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getData, postData, serverURL } from "../../services/FetchNodeServices";
 import JoditEditor from "jodit-react";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete, TextField } from "@mui/material";
 
 const EditCategory = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     categoryName: "",
     categoryImage: null,
     categoryStatus: false,
-    shortDescription: "",
+    faq: [{ question: "", answer: "" }],
+    healthTestId: "",
+    productId: [],
     description: "",
-    productId: []
+    shortDescription: "",
+    connectCommunity: "",
   });
-  const [btnLoading, setBtnLoading] = useState(false);
+
   const [productList, setProductList] = useState([]);
+  const [healthTestList, setHealthTestList] = useState([]);
   const [oldImage, setOldImage] = useState(null);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const response = await getData(`api/categories/get-category-by-id/${id}`);
-        if (response?.success) {
-          setFormData({
-            categoryName: response?.category?.categoryName,
-            shortDescription: response?.category?.shortDescription,
-            description: response?.category?.description,
-            productId: response?.category?.productId?.map((product) => product._id) || [],
-            categoryStatus: response?.category?.isActive,
-            categoryImage: response?.category?.image || null,
-          });
-          setOldImage(response?.category?.image || null);
-        }
-      } catch (error) {
-        toast.error("Error fetching category data");
-        console.error("Error fetching category:", error);
-      }
-    };
-
-
-    const fetchProducts = async () => {
-      setBtnLoading(true);
-      try {
-        const response = await getData("api/products/all-product");
-        if (response.success) {
-          setProductList(response?.products || []);
-        }
-      } catch (error) {
-        toast.error("Failed to fetch products!");
-        console.error("Error fetching products:", error);
-      } finally {
-        setBtnLoading(false);
-      }
-    };
-
     fetchCategory();
     fetchProducts();
+    fetchHealthTests();
   }, [id]);
 
-  const handleJoditChange = (newValue) => {
-    setFormData((prev) => ({
-      ...prev,
-      description: newValue
-    }));
+  const fetchCategory = async () => {
+    try {
+      const response = await getData(`api/categories/get-category-by-id/${id}`);
+      console.log("XXXXXXXXXX", response)
+      if (response?.success) {
+        const category = response.category;
+        setFormData({
+          categoryName: category.categoryName || "",
+          shortDescription: category.shortDescription || "",
+          description: category.description || "",
+          productId: category.productId?.map((item) => item._id) || [],
+          categoryStatus: category.isActive === "True",
+          healthTestId: category.healthTestId || "",
+          connectCommunity: category.connectCommunity || "",
+          faq: category.faq?.length ? category.faq : [{ question: "", answer: "" }],
+          categoryImage: null,
+        });
+        setOldImage(category.image || null);
+      } else {
+        toast.error("Failed to load category details.");
+      }
+    } catch (error) {
+      console.error("fetchCategory Error:", error);
+      toast.error("Error fetching category details.");
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await getData("api/products/all-product");
+      if (response?.success) {
+        setProductList(response.products || []);
+      } else {
+        toast.error("Failed to load products.");
+      }
+    } catch (error) {
+      console.error("fetchProducts Error:", error);
+      toast.error("Error fetching products.");
+    }
+  };
+
+  const fetchHealthTests = async () => {
+    try {
+      const response = await postData("api/test/get-mind-test");
+      if (response?.status) {
+        setHealthTestList(response.data.reverse() || []);
+      } else {
+        toast.error("Failed to load health tests.");
+      }
+    } catch (error) {
+      console.error("fetchHealthTests Error:", error);
+      toast.error("Error fetching health tests.");
+    }
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value
+      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
     }));
+  };
+
+  const handleJoditChange = (newValue) => {
+    setFormData((prev) => ({ ...prev, description: newValue }));
+  };
+
+  const handleCheckboxChange = () => {
+    setFormData((prev) => ({ ...prev, categoryStatus: !prev.categoryStatus }));
+  };
+
+  const handleFaqChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedFaq = [...formData.faq];
+    updatedFaq[index][name] = value;
+    setFormData((prev) => ({ ...prev, faq: updatedFaq }));
+  };
+
+  const addFaq = () => {
+    const lastFaq = formData.faq[formData.faq.length - 1];
+    if (lastFaq?.question && lastFaq?.answer) {
+      setFormData((prev) => ({ ...prev, faq: [...prev.faq, { question: "", answer: "" }] }));
+    } else {
+      toast.error("Please complete the last FAQ before adding a new one.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -86,33 +126,41 @@ const EditCategory = () => {
 
     const payload = new FormData();
     payload.append("categoryName", formData.categoryName);
+    payload.append("categoryStatus", formData.categoryStatus);
+    payload.append("productId", JSON.stringify(formData.productId || null)); // Ensure product IDs are serialized
+    payload.append("description", formData.description);
+    payload.append("shortDescription", formData.shortDescription);
+    payload.append("healthTestId", formData.healthTestId);
+    payload.append("connectCommunity", formData.connectCommunity);
+
+    // Append FAQs to form data
+    formData.faq.forEach((faq, index) => {
+      payload.append(`faq[${index}][question]`, faq.question);
+      payload.append(`faq[${index}][answer]`, faq.answer);
+    });
+
     if (formData.categoryImage) {
       payload.append("categoryImage", formData.categoryImage);
     }
-    payload.append("categoryStatus", formData.categoryStatus ? "True" : "False");
-    payload.append("shortDescription", formData.shortDescription);
-    payload.append("description", formData.description);
-    payload.append("productId", formData?.productId);
-
-    if (oldImage) {
+    if (oldImage && !formData.categoryImage) {
       payload.append("oldImage", oldImage);
     }
 
     try {
       const response = await postData(`api/categories/update-category/${id}`, payload);
-      if (response?.success === true) {
-        toast.success(response.message);
+      if (response?.success) {
+        toast.success(response.message || "Category updated successfully!");
         navigate("/all-dieses");
+      } else {
+        toast.error(response.message || "Failed to update category.");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error updating category");
-      console.error("Error updating category:", error);
+      console.error("handleSubmit Error:", error);
+      toast.error("Something went wrong while updating category.");
     } finally {
       setBtnLoading(false);
     }
   };
-
-  console.log("fromData", formData)
 
   return (
     <>
@@ -130,52 +178,52 @@ const EditCategory = () => {
 
       <div className="d-form">
         <form className="row g-3" onSubmit={handleSubmit}>
+          {/* Category Name */}
           <div className="col-md-4">
-            <label htmlFor="categoryName" className="form-label">
-              Category Name
-            </label>
+            <label className="form-label">Disease Name</label>
             <input
               type="text"
               name="categoryName"
               className="form-control"
-              id="categoryName"
               value={formData.categoryName}
               onChange={handleChange}
               required
             />
           </div>
 
+          {/* Category Image */}
           <div className="col-md-4">
-            <label htmlFor="categoryImage" className="form-label">
-              Category Image
-            </label>
+            <label className="form-label">Image (300x200 px)</label>
             <input
               type="file"
               name="categoryImage"
               className="form-control"
-              id="categoryImage"
+              accept="image/*"
               onChange={handleChange}
             />
-            {oldImage && (
-              <img src={`${serverURL}/uploads/categorys/${oldImage}`} alt="old category" width="100" />
-            )}
+            {formData.categoryImage ? (
+              <img src={URL.createObjectURL(formData.categoryImage)} alt="Preview" width="100" className="mt-2" />
+            ) : oldImage ? (
+              <img src={`${serverURL}/uploads/categorys/${oldImage}`} alt="Old Image" width="100" className="mt-2" />
+            ) : null}
           </div>
 
-          <div className="col-md-4" style={{ marginTop: '40px' }}>
+          {/* Select Products */}
+          <div className="col-md-4">
+            <label className="form-label">Select Product</label>
             <Autocomplete
               multiple
               options={productList}
-              value={productList.filter((product) => formData.productId.includes(product._id))}
-              getOptionLabel={(option) => option.productName}
-              onChange={(e, newValue) => setFormData(prev => ({ ...prev, productId: newValue.map(product => product._id) }))}
-              renderInput={(params) => <TextField {...params} label="Select Product" />}
+              value={productList.filter((p) => formData.productId.includes(p._id))}
+              getOptionLabel={(option) => option?.productName || ""}
+              onChange={(e, newValue) => setFormData(prev => ({ ...prev, productId: newValue.map(item => item._id) }))}
+              renderInput={(params) => <TextField {...params} />}
             />
           </div>
 
-          <div className="col-md-12">
-            <label htmlFor="shortDescription" className="form-label">
-              Add Short Description
-            </label>
+          {/* Short Description */}
+          <div className="col-md-6">
+            <label className="form-label">Short Description</label>
             <input
               name="shortDescription"
               value={formData.shortDescription}
@@ -185,34 +233,94 @@ const EditCategory = () => {
             />
           </div>
 
-          <div className="col-md-12">
-            <label className="form-label">For Information</label>
-            <JoditEditor
-              value={formData.description}
-              onChange={handleJoditChange}
+          {/* Health Test */}
+          <div className="col-md-6">
+            <label className="form-label">Select Health Test</label>
+            <Autocomplete
+              options={healthTestList}
+              value={healthTestList.find((test) => test?._id === formData.healthTestId) || null}
+              getOptionLabel={(option) => option?.addHeaderTitle || ""}
+              onChange={(e, newValue) => setFormData(prev => ({ ...prev, healthTestId: newValue?._id || "" }))}
+              renderInput={(params) => <TextField {...params} />}
             />
           </div>
 
+          {/* Homepage Active */}
           <div className="col-12">
             <div className="form-check">
               <input
                 className="form-check-input"
                 type="checkbox"
-                name="categoryStatus"
-                id="categoryStatus"
+                id="categoryActive"
                 checked={formData.categoryStatus}
-                onChange={handleChange}
+                onChange={handleCheckboxChange}
               />
-              <label className="form-check-label" htmlFor="categoryStatus">
+              <label className="form-check-label" htmlFor="categoryActive">
                 Active on Homepage
               </label>
             </div>
           </div>
 
-          <div className="col-12 text-center">
+          {/* FAQ Section */}
+          <hr />
+          <div className="col-md-12">
+            <h4>Add FAQ</h4>
+          </div>
+
+          {formData.faq.map((faq, index) => (
+            <div key={index} className="col-md-12 d-flex gap-3">
+              <div className="col-md-6">
+                <label className="form-label">Question</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="question"
+                  value={faq.question}
+                  onChange={(e) => handleFaqChange(index, e)}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Answer</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="answer"
+                  value={faq.answer}
+                  onChange={(e) => handleFaqChange(index, e)}
+                />
+              </div>
+            </div>
+          ))}
+
+          <div className="col-md-12">
+            <button type="button" className="btn btn-primary mt-3" onClick={addFaq}>
+              Add FAQ
+            </button>
+          </div>
+
+          {/* Buyer's Guide */}
+          <div className="col-md-12">
+            <label className="form-label">Buyer's Guide</label>
+            <JoditEditor value={formData.description} onChange={handleJoditChange} />
+          </div>
+
+          {/* Connect Community */}
+          <div className="col-md-6">
+            <label className="form-label">Connect Our Community URL</label>
+            <input
+              type="url"
+              className="form-control"
+              name="connectCommunity"
+              value={formData.connectCommunity}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <div className="col-12 text-center mt-4">
             <button
               type="submit"
-              className={`${btnLoading ? "not-allowed" : "allowed"}`}
+              className={`btn ${btnLoading ? "btn-secondary" : "btn-primary"}`}
               disabled={btnLoading}
             >
               {btnLoading ? "Please Wait..." : "Update Category"}

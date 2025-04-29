@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { postData } from "../../services/FetchNodeServices";
 
 const AddTag = () => {
   const [formData, setFormData] = useState({
@@ -28,18 +29,20 @@ const AddTag = () => {
 
     try {
       // Send POST request to the backend
-      const response = await axios.post(
-        "https://api.manovaidya.com/api/add-tags",
-        formData
-      );
+      const response = await postData("api/tag/create-tags", formData);
+      console.log("FF", response)
+      if (response.status) {
+        toast.success("Tag added successfully!");
+        setIsLoading(false);
+        navigate("/all-tags");
+      } else {
+        toast.success(response?.message || "Somthing Wrongs!");
+        setIsLoading(false);
+      }
 
-      // Show success message
-      toast.success("Tag added successfully!");
-      setIsLoading(false);
-      navigate("/all-tags"); // Redirect to the page showing all tags
     } catch (error) {
       setIsLoading(false);
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
     }
   };
 
@@ -63,29 +66,13 @@ const AddTag = () => {
             <label htmlFor="title" className="form-label">
               Tag Name
             </label>
-            <input
-              type="text"
-              name="tagName"
-              className="form-control"
-              id="title"
-              value={formData.tagName}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" name="tagName" className="form-control" id="title" value={formData.tagName} onChange={handleChange} required />
           </div>
           <div className="col-md-6">
             <label htmlFor="TagColour" className="form-label">
               Tag Color
             </label>
-            <input
-              type="color"
-              name="tagColor"
-              className="form-control"
-              id="TagColour"
-              value={formData.tagColor}
-              onChange={handleChange}
-              required
-            />
+            <input type="color" name="tagColor" className="form-control" id="TagColour" value={formData.tagColor} onChange={handleChange} required />
           </div>
 
           <div className="col-12 text-center">

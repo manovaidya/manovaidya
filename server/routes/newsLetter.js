@@ -9,23 +9,13 @@ router.get('/get-all-newsLetter', async (req, res) => {
         const newsletters = await NewsLetter.find();
 
         if (!newsletters || newsletters.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No newsletters found.',
-            });
+            return res.status(200).json({ success: false, message: 'No newsletters found.', });
         }
-
-        res.status(200).json({
-            success: true,
-            newsletters,
-        });
+        console.log('newsletters', newsletters)
+        res.status(200).json({ success: true, newsletters, });
     } catch (error) {
         console.error('Error fetching newsletters:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch newsletters.',
-            error: error.message,
-        });
+        res.status(500).json({ success: false, message: 'Failed to fetch newsletters.', error: error.message, });
     }
 });
 

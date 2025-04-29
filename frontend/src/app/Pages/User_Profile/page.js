@@ -12,6 +12,7 @@ export default function UserProfile() {
     const router = useRouter();
     const [selectedSection, setSelectedSection] = useState("dashboard");
     const [user_data, setUser_data] = useState("");
+    const [data, setData] = useState('')
     const [appointments, setAppointments] = useState([]);
     const dispatch = useDispatch()
 
@@ -41,7 +42,20 @@ export default function UserProfile() {
                 }
             }
         };
+        const fetchUser = async () => {
+            const response = await getData(`api/users/get-by-user-id/${user_data?._id}`)
+            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXX:-", response)
+            const data = response?.user
+            if (response?.success) {
+                setData({
+                    ...data, user: data?._id, email: data.email, firstName: data?.name, country: data?.address.country,
+                    houseNo: data?.address?.addressLine1, street: data?.address?.addressLine2, state: data?.address?.state,
+                    pinCode: data?.address?.pinCode, city: data?.address?.city
+                });
+            }
+        }
 
+        fetchUser()
         fetchAppointments();
     }, [user_data]);
 
@@ -53,31 +67,31 @@ export default function UserProfile() {
                     <tbody>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>Name:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.name}</td>
+                            <td className={styles.tabletd}>{data?.name}</td>
                         </tr>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>E-mail:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.email}</td>
+                            <td className={styles.tabletd}>{data?.email}</td>
                         </tr>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>Address:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.address?.addressLine1}</td>
+                            <td className={styles.tabletd}>{data?.address?.addressLine1}</td>
                         </tr>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>Address 2:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.address?.addressLine2}</td>
+                            <td className={styles.tabletd}>{data?.address?.addressLine2}</td>
                         </tr>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>Country:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.address?.state}, {user_data?.address?.country}</td>
+                            <td className={styles.tabletd}>{data?.address?.state}, {data?.address?.country}</td>
                         </tr>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>Zip:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.address?.pinCode}</td>
+                            <td className={styles.tabletd}>{data?.address?.pinCode}</td>
                         </tr>
                         <tr className={styles.tableRow}>
                             <td className={styles.tabletd}><strong>Phone:</strong></td>
-                            <td className={styles.tabletd}>{user_data?.phone}</td>
+                            <td className={styles.tabletd}>{data?.phone}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -100,7 +114,7 @@ export default function UserProfile() {
             try {
                 localStorage.removeItem("User_data");
                 localStorage.removeItem("token");
-                 dispatch(login('false'));
+                dispatch(login('false'));
                 router?.push("/");
 
                 Swal.fire("Logged out!", "You have been logged out.", "success");

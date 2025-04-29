@@ -10,21 +10,15 @@ import { Autocomplete, TextField } from "@mui/material";
 const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [herbsList, setHerbsList] = useState([])
+  const [tagList, setTagList] = useState([])
   const [formData, setFormData] = useState({
-    productName: "",
-    productDescription: "",
-    productSubDescription: "",
+    productName: "", productDescription: "", productSubDescription: "",
     Variant: [{ price: "", discountPrice: "", finalPrice: "" }],
-    herbsId: [],
-    productImage: [],
-    blogImage: [],
-    faqs: [{ question: "", answer: "" }],
-    urls: [{ url: "" }],
+    herbsId: [], tagType:'', productImage: [], blogImage: [],
+    faqs: [{ question: "", answer: "" }], urls: [{ url: "" }], RVUS: [{ RVU: "" }],
   });
 
   const navigate = useNavigate();
-
-
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
@@ -42,7 +36,21 @@ const AddProduct = () => {
         setIsLoading(false);
       }
     };
+
+    const fetchTag = async () => {
+      try {
+        const response = await getData("api/tag/get-all-tags");
+        console.log("response:-", response)
+        if (response?.status) {
+          setTagList(response?.data);
+        }
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    }
     fetchProducts();
+    fetchTag()
   }, []);
 
   const handleInputChange = (e) => {
@@ -108,7 +116,7 @@ const AddProduct = () => {
 
     // Loop through formData and append data accordingly
     Object.keys(formData).forEach((key) => {
-      if (key === "Variant" || key === "herbsId" || key === "faqs" || key === "urls") {
+      if (key === "Variant" || key === "herbsId" || key === "faqs" || key === "urls" || key === 'RVUS' ) {
         // For objects or arrays (like Variant, herbsId, etc.), we need to stringify them
         form.append(key, JSON.stringify(formData[key]));
       } else if (key === "productImage") {
@@ -180,6 +188,15 @@ const AddProduct = () => {
     const updatedUrls = formData.urls.filter((_, i) => i !== index);
     setFormData({ ...formData, urls: updatedUrls });
   };
+  const addRVUSField = () => {
+    setFormData({ ...formData, RVUS: [...formData.RVUS, { RVU: "" }] });
+  };
+
+  const deleteRVUSField = (index) => {
+    const updatedUrls = formData.RVUS.filter((_, i) => i !== index);
+    setFormData({ ...formData, RVUS: updatedUrls });
+  };
+
   console.log("XXXXXXXX", formData)
   return (
     <>
@@ -211,7 +228,7 @@ const AddProduct = () => {
               onChange={handleFileChange}
               required
             />
-                <small className="text-danger">Select up to 4 images.</small>
+            <small className="text-danger">Select up to 4 images.</small>
           </div>
 
           {/* Product Name */}
@@ -358,6 +375,7 @@ const AddProduct = () => {
                     onChange={(e) => handleVariantChange(index, e)}
                   >
                     <option value="">Select Day</option>
+                    <option value="15 Day">15 Day</option>
                     <option value="30 Day">30 Day</option>
                     <option value="60 Day">60 Day</option>
                     <option value="90 Day">90 Day</option>
@@ -375,6 +393,8 @@ const AddProduct = () => {
                     onChange={(e) => handleVariantChange(index, e)}
                   >
                     <option value="">Select Bottle</option>
+                    <option value="1 Bottle">1 Bottle</option>
+                    <option value="2 Bottle">2 Bottle</option>
                     <option value="3 Bottle">3 Bottle</option>
                     <option value="6 Bottle">6 Bottle</option>
                     <option value="9 Bottle">9 Bottle</option>
@@ -385,13 +405,15 @@ const AddProduct = () => {
                 {/* Taxes */}
                 <div className="col-md-2">
                   <label className="form-label">Taxe's</label>
-                  <input
-                    type="text"
-                    name="tex"
-                    className="form-control"
-                    value={variant.tex}
-                    onChange={(e) => handleVariantChange(index, e)}
-                  />
+                  <input type="text" name="tex" className="form-control" value={variant.tex} onChange={(e) => handleVariantChange(index, e)} />
+                </div>
+
+                <div className="col-md-2">
+                  <label className="form-label">Select Type</label>
+                  <select name="tagType" className="form-control" value={variant.tagType || ""} onChange={(e) => handleVariantChange(index, e)}>
+                    <option value="">Select Type</option>
+                    {tagList?.map((item) => (<option key={item?._id} value={item?._id}>{item?.tagName}</option>))}
+                  </select>
                 </div>
               </div>
 
@@ -428,13 +450,7 @@ const AddProduct = () => {
                   />
                 </div>
                 <div className="col-md-5">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Answer"
-                    value={faq.answer}
-                    onChange={(e) => handleInputFaqChange(index, "answer", e.target.value)}
-                  />
+                  <input type="text" className="form-control" placeholder="Answer" value={faq.answer} onChange={(e) => handleInputFaqChange(index, "answer", e.target.value)} />
                 </div>
                 <div className="col-md-2">
                   {index > 0 && (
@@ -457,13 +473,7 @@ const AddProduct = () => {
             <h2>Add Blog Images</h2>
             <div className="row">
               <div className="col-md-6">
-                <input
-                  type="file"
-                  className="form-control"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                />
+                <input type="file" className="form-control" accept="image/*" multiple onChange={handleImageChange} />
                 <small className="text-danger">Select up to 4 images.</small>
               </div>
             </div>
@@ -475,17 +485,7 @@ const AddProduct = () => {
             {formData?.urls?.map((urlItem, index) => (
               <div className="row mb-2" key={index}>
                 <div className="col-md-10">
-                  <input
-                    type="url"
-                    className="form-control"
-                    value={urlItem?.url}
-                    onChange={(e) => {
-                      const updatedUrls = [...formData.urls];
-                      updatedUrls[index].url = e.target.value;
-                      setFormData({ ...formData, urls: updatedUrls });
-                    }}
-                    placeholder="URL"
-                  />
+                  <input type="url" className="form-control" value={urlItem?.url} onChange={(e) => { const updatedUrls = [...formData.urls]; updatedUrls[index].url = e.target.value; setFormData({ ...formData, urls: updatedUrls }); }} placeholder="URL" />
                 </div>
                 <div className="col-md-2">
                   {index > 0 && (
@@ -498,6 +498,29 @@ const AddProduct = () => {
             ))}
             <div className="col-md-12 mt-3">
               <button type="button" className="btn btn-primary me-2" onClick={addUrlField}>
+                Add More
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <h2>Add Reviews Video URLs</h2>
+            {formData?.RVUS?.map((urlItem, index) => (
+              <div className="row mb-2" key={index}>
+                <div className="col-md-10">
+                  <input type="url" className="form-control" value={urlItem?.RVU} onChange={(e) => { const updatedUrls = [...formData.RVUS]; updatedUrls[index].RVU = e.target.value; setFormData({ ...formData, RVUS: updatedUrls }); }} placeholder="URL" />
+                </div>
+                <div className="col-md-2">
+                  {index > 0 && (
+                    <button type="button" className="btn btn-danger" onClick={() => deleteRVUSField(index)}>
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            <div className="col-md-12 mt-3">
+              <button type="button" className="btn btn-primary me-2" onClick={addRVUSField}>
                 Add More
               </button>
             </div>

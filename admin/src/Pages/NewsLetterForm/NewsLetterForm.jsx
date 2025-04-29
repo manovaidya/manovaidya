@@ -20,7 +20,7 @@ const NewsLetterForm = () => {
                 if (response?.success === true) {
                     setSubscribers(response?.newsletters);
                 } else {
-                    toast.error("Failed to load newsletter subscribers");
+                    // toast.error(response?.message || "Failed to load newsletter subscribers");
                 }
             } catch (error) {
                 toast.error("An error occurred while fetching subscribers");

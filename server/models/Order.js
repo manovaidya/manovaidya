@@ -71,6 +71,10 @@ const orderSchema = new mongoose.Schema({
       required: true
     }
   },
+  gst:{
+    type: String,
+    trim: true,
+  },
   couponDiscount: {
     type: String,
     trim: true,

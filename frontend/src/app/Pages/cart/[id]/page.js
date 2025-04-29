@@ -103,11 +103,7 @@ const CartPage = ({ params }) => {
                             </div>
                         ) : (
                             cart?.map((item, index) => (
-                                <div
-                                    className="cart-item-data"
-                                    style={{ margin: "5px 0px" }}
-                                    key={item?._id}
-                                >
+                                <div className="cart-item-data" style={{ margin: "5px 0px" }} key={item?._id}  >
                                     <div className="cart-product-image" style={{ width: "100%" }}>
                                         <img
                                             src={`${serverURL}/uploads/products/${item?.product?.productImages[0]}`}
@@ -118,28 +114,14 @@ const CartPage = ({ params }) => {
                                         <h4>{item?.product?.productName}</h4>
                                     </div>
                                     <div
-                                        style={{
-                                            display: "flex",
-                                            width: "100%",
-                                            justifyContent: "center",
-                                            gap:'10px',
-                                            alignItems:'center'
-                                        }}
-                                    >
-                                        <button
-                                            onClick={() => updateQuantity("decrement", index)}
-                                            disabled={item?.quantity <= 1}
-                                            className="quantity"
-                                        >
+                                        style={{ display: "flex", width: "100%", justifyContent: "center", gap: '10px', alignItems: 'center' }}                                    >
+                                        <button onClick={() => updateQuantity("decrement", index)} disabled={item?.quantity <= 1} className="quantity"                                        >
                                             &#8722;
                                         </button>
                                         <span>
                                             {item?.quantity}
                                         </span>
-                                        <button
-                                            className="quantity"
-                                            onClick={() => updateQuantity("increment", index)}
-                                        >
+                                        <button className="quantity" onClick={() => updateQuantity("increment", index)}                                        >
                                             &#43;
                                         </button>
                                     </div>

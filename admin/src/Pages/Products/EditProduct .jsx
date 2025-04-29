@@ -11,6 +11,7 @@ const EditProduct = () => {
     const { id } = useParams(); // Get product ID from URL
     const [isLoading, setIsLoading] = useState(false);
     const [herbsList, setHerbsList] = useState([])
+    const [tagList, setTagList] = useState([])
     const [formData, setFormData] = useState({
         productName: "",
         productDescription: "",
@@ -22,7 +23,8 @@ const EditProduct = () => {
         faqs: [{ question: "", answer: "" }],
         urls: [{ url: "" }],
         oldProductImage: [],
-        oldBlogImage: []
+        oldBlogImage: [],
+        RVUS: [{ RVU: "" }],
     });
 
     const navigate = useNavigate();
@@ -34,7 +36,6 @@ const EditProduct = () => {
                 const productResponse = await getData(`api/products/get_product_by_id/${id}`);
                 console.log("PRODUCT", productResponse)
                 const productData = productResponse?.product;
-
                 if (productResponse?.success) {
                     // console.log("Product Data:", productData);
                     setFormData({
@@ -42,11 +43,12 @@ const EditProduct = () => {
                         productName: productData?.productName || "",
                         productSubDescription: productData?.productSubDescription || "",
                         productDescription: productData?.productDescription || "",
-                        Variant: productData?.variant?.length > 0 ? productData?.variant.map(v => ({ ...v, price: v?.price || 0, discountPrice: v?.discountPrice || 0, finalPrice: v?.finalPrice || 0, day: v?.day || "", bottle: v?.bottle || "", tex: v?.tex || "0", })) : [],
+                        Variant: productData?.variant?.length > 0 ? productData?.variant.map(v => ({ ...v, price: v?.price || 0, discountPrice: v?.discountPrice || 0, finalPrice: v?.finalPrice || 0, day: v?.day || "", bottle: v?.bottle || "", tex: v?.tex || "0", tagType: v?.tagType })) : [],
                         oldProductImage: productData?.productImages?.length > 0 ? productData?.productImages : [],
                         oldBlogImage: productData?.blogImages?.length > 0 ? productData?.blogImages : [],
                         faqs: productData?.faqs?.length > 0 ? productData?.faqs.map(faq => ({ question: faq?.question || "", answer: faq?.answer || "", })) : [],
                         urls: productData?.urls?.length > 0 ? productData?.urls.map(url => ({ url: url?.url || "", })) : [],
+                        RVUS: productData?.RVUS?.length > 0 ? productData?.RVUS.map(RVU => ({ RVU: RVU?.RVU || "", })) : [],
                         herbsId: productData?.herbsId?.length > 0 ? productData?.herbsId.map(h => h?._id) : []
                     });
                 } else {
@@ -62,25 +64,40 @@ const EditProduct = () => {
     }, [id]);
 
 
-    useEffect(() => {
+     useEffect(() => {
         const fetchProducts = async () => {
-            setIsLoading(true);
-            try {
-                const response = await getData("api/herbs/get-all-herbs");
-                console.log(response)
-                if (response?.status === true) {
-                    setHerbsList(response?.data || []);
-                }
-
-            } catch (error) {
-                console.error("Error fetching products:", error);
-                // toast.error("Failed to fetch products!");
-            } finally {
-                setIsLoading(false);
+          setIsLoading(true);
+          try {
+            const response = await getData("api/herbs/get-all-herbs");
+            console.log(response)
+            if (response?.status === true) {
+              setHerbsList(response?.data || []);
             }
+    
+          } catch (error) {
+            console.error("Error fetching products:", error);
+            // toast.error("Failed to fetch products!");
+          } finally {
+            setIsLoading(false);
+          }
         };
+    
+        const fetchTag = async () => {
+          try {
+            const response = await getData("api/tag/get-all-tags");
+            console.log("response:-", response)
+            if (response?.status) {
+              setTagList(response?.data);
+            }
+          } catch (error) {
+          } finally {
+            setIsLoading(false);
+          }
+        }
         fetchProducts();
-    }, []);
+        fetchTag()
+      }, []);
+    
 
     const handleInputFaqChange = (index, field, value) => {
         const newfaqs = [...formData?.faqs];
@@ -138,7 +155,7 @@ const EditProduct = () => {
 
         const form = new FormData();
         Object.keys(formData).forEach((key) => {
-            if (key === "Variant" || key === "herbsId" || key === "faqs" || key === "urls") {
+            if (key === "Variant" || key === "herbsId" || key === "faqs" || key === "urls" || key === 'RVUS') {
                 form.append(key, JSON.stringify(formData[key]));
             } else if (key === "productImage") {
                 formData.productImage.forEach((file) => form.append("productImages", file));
@@ -210,6 +227,16 @@ const EditProduct = () => {
         const updatedUrls = formData.urls.filter((_, i) => i !== index);
         setFormData({ ...formData, urls: updatedUrls });
     };
+
+    const addRVUSField = () => {
+        setFormData({ ...formData, RVUS: [...formData.RVUS, { RVU: "" }] });
+    };
+
+    const deleteRVUSField = (index) => {
+        const updatedUrls = formData.RVUS.filter((_, i) => i !== index);
+        setFormData({ ...formData, RVUS: updatedUrls });
+    };
+
     console.log("XXXXXXXX", formData)
     return (
         <>
@@ -335,6 +362,7 @@ const EditProduct = () => {
                                         onChange={(e) => handleVariantChange(index, e)}
                                     >
                                         <option value="">Select Day</option>
+                                        <option value="15 Day">15 Day</option>
                                         <option value="30 Day">30 Day</option>
                                         <option value="60 Day">60 Day</option>
                                         <option value="90 Day">90 Day</option>
@@ -352,6 +380,8 @@ const EditProduct = () => {
                                         onChange={(e) => handleVariantChange(index, e)}
                                     >
                                         <option value="">Select Bottle</option>
+                                        <option value="1 Bottle">1 Bottle</option>
+                                        <option value="2 Bottle">2 Bottle</option>
                                         <option value="3 Bottle">3 Bottle</option>
                                         <option value="6 Bottle">6 Bottle</option>
                                         <option value="9 Bottle">9 Bottle</option>
@@ -370,6 +400,14 @@ const EditProduct = () => {
                                         onChange={(e) => handleVariantChange(index, e)}
                                     />
                                 </div>
+                                <div className="col-md-2">
+                                    <label className="form-label">Select Type</label>
+                                    <select name="tagType" className="form-control" value={variant.tagType || ""} onChange={(e) => handleVariantChange(index, e)}>
+                                        <option value="">Select Type</option>
+                                        {tagList?.map((item) => (<option key={item?._id} value={item?._id}>{item?.tagName}</option>))}
+                                    </select>
+                                </div>
+
                             </div>
 
                             {/* Delete Button */}
@@ -405,13 +443,7 @@ const EditProduct = () => {
                                     />
                                 </div>
                                 <div className="col-md-5">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Answer"
-                                        value={faq.answer}
-                                        onChange={(e) => handleInputFaqChange(index, "answer", e.target.value)}
-                                    />
+                                    <input type="text" className="form-control" placeholder="Answer" value={faq.answer} onChange={(e) => handleInputFaqChange(index, "answer", e.target.value)} />
                                 </div>
                                 <div className="col-md-2">
                                     {index > 0 && (
@@ -473,7 +505,28 @@ const EditProduct = () => {
                             </button>
                         </div>
                     </div>
-
+                    <div className="mt-4">
+                        <h2>Add Reviews Video URLs</h2>
+                        {formData?.RVUS?.map((urlItem, index) => (
+                            <div className="row mb-2" key={index}>
+                                <div className="col-md-10">
+                                    <input type="url" className="form-control" value={urlItem?.RVU} onChange={(e) => { const updatedUrls = [...formData.RVUS]; updatedUrls[index].RVU = e.target.value; setFormData({ ...formData, RVUS: updatedUrls }); }} placeholder="URL" />
+                                </div>
+                                <div className="col-md-2">
+                                    {index > 0 && (
+                                        <button type="button" className="btn btn-danger" onClick={() => deleteRVUSField(index)}>
+                                            Delete
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                        <div className="col-md-12 mt-3">
+                            <button type="button" className="btn btn-primary me-2" onClick={addRVUSField}>
+                                Add More
+                            </button>
+                        </div>
+                    </div>
                     {/* Submit */}
                     <div className="col-md-12 mt-4 text-center">
                         <button type="submit" className="btn btn-success" disabled={isLoading}>

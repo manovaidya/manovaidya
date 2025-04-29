@@ -9,7 +9,7 @@ import { Autocomplete, TextField } from "@mui/material";
 
 const AddCategory = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({ categoryName: "", categoryImage: null, categoryStatus: "False", faq: [{ question: "", answer: "" }], healthTestId: '', productId: [], description: "", shortDescription: "" });
+  const [formData, setFormData] = useState({ categoryName: "", categoryImage: null, categoryStatus: "False", faq: [{ question: "", answer: "" }], healthTestId: '', productId: [], description: "", shortDescription: "", connectCommunity: '' });
   const [productList, setProductList] = useState([]);
   const [healthTestList, setHealthTestList] = useState([]);
   const navigate = useNavigate();
@@ -105,6 +105,7 @@ const AddCategory = () => {
     uploadData.append("description", formData.description);
     uploadData.append("shortDescription", formData.shortDescription);
     uploadData.append("healthTestId", formData.healthTestId);
+    uploadData.append("connectCommunity", formData.connectCommunity);
 
     // Append FAQs to form data
     formData.faq.forEach((faq, index) => {
@@ -194,12 +195,7 @@ const AddCategory = () => {
             <label htmlFor="" className="form-label">
               Add Short Description
             </label>
-            <input
-              name="shortDescription"
-              onChange={handleChange}
-              className="form-control"
-              type="text"
-            />
+            <input name="shortDescription" onChange={handleChange} className="form-control" type="text" />
           </div>
 
           <div className="col-md-6" style={{ marginTop: '40px' }}>
@@ -275,6 +271,10 @@ const AddCategory = () => {
             <JoditEditor value={formData?.description} onChange={handleJoditChange} />
           </div>
 
+          <div className="col-md-6">
+            <label className="form-label">Connect Our Community URL</label>
+            <input type="url" className="form-control" name="connectCommunity" value={formData?.connectCommunity} onChange={handleChange} />
+          </div>
           <div className="col-md-12 mt-3">
             <button type="submit" className="btn btn-success" disabled={isLoading}>
               {isLoading ? "Saving..." : "Add Category"}

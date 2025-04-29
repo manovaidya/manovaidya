@@ -13,74 +13,6 @@ import sendToken from '../middleware/jwtToken.js';
 
 const router = express.Router();
 
-// Get all users (admin only)
-router.get('/get-all-user', async (req, res) => {
-  try {
-    const { search } = req.query;
-
-    const filter = {};
-
-    if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { mobile: { $regex: search, $options: 'i' } }
-      ];
-    }
-
-  
-
-    const users = await User.find(filter)
-      .sort({ createdAt: -1 })
-      .select('-password');
-
-    // Get total count for pagination
-    const total = await User.countDocuments(filter);
-
-    res.status(200).json({
-      success: true,
-      users,
-      pagination: {
-        total,
-      
-      }
-    });
-  } catch (error) {
-    console.error('Get users error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get users',
-      error: error.message
-    });
-  }
-});
-
-// Get user by ID (admin only)
-router.get('/:id', authenticateToken, isAdmin, async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).select('-password');
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      user
-    });
-  } catch (error) {
-    console.error('Get user error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get user',
-      error: error.message
-    });
-  }
-});
-
 // Update user profile
 router.put('/profile', authenticateToken, upload.single('profilePic'), async (req, res) => {
   try {
@@ -417,6 +349,49 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+router.get('/get-by-user-id/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ success: false, message: 'Failed to get user', error: error.message });
+  }
+});
+
+
+router.get('/get-all-user', async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    const filter = {};
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { mobile: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const users = await User.find(filter).sort({ createdAt: -1 }).select('-password');
+
+    // Get total count for pagination
+    const total = await User.countDocuments(filter);
+
+    res.status(200).json({
+      success: true, users, pagination: { total, }
+    });
+  } catch (error) {
+    console.error('Get users error:', error);
+    res.status(500).json({ success: false, message: 'Failed to get users', error: error.message });
+  }
+});
+
 router.post('/send-otp-for-user-signup', async (req, res) => {
   try {
     const { email } = req.body;
@@ -445,7 +420,6 @@ router.post('/send-otp-for-user-signup', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to send OTP', error: error.message });
   }
 });
-
 
 router.post('/verify-otp-for-user-signup', async (req, res) => {
   try {
@@ -517,7 +491,6 @@ router.post('/user-login', async (req, res) => {
     return res.status(500).json({ status: false, message: error.message });
   }
 });
-
 
 router.post('/send-reset-password-email', async (req, res, next) => {
   try {
@@ -606,7 +579,7 @@ router.get('/delete-user/:id', async (req, res) => {
     // if (user._id.toString() === req.user.id) {
     //   return res.status(400).json({ success: false, message: 'Cannot delete your own account' });
     // }
-    
+
     await user.deleteOne();
 
     res.status(200).json({ success: true, message: 'User deleted successfully' });
@@ -615,5 +588,6 @@ router.get('/delete-user/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to delete user', error: error.message });
   }
 });
+
 
 export default router;

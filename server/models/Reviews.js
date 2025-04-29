@@ -23,7 +23,7 @@ const reviewSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    required: [true, 'Profile image URL is required'],
+    // required: [true, 'Profile image URL is required'],
   },
   reviewText: {
     type: String,

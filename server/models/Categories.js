@@ -8,7 +8,7 @@ const categorieSchema = new mongoose.Schema({
     default: null,
     trim: true
   }],
-  healthTestId:{
+  healthTestId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'AddHealthTest',
     default: null,
@@ -21,6 +21,10 @@ const categorieSchema = new mongoose.Schema({
   },
   description: {
     type: String
+  },
+  connectCommunity: {
+    type: String,
+    require: true
   },
   shortDescription: {
     type: String

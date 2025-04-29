@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getData, postData } from "../../services/FetchNodeServices";
 
 const EditTag = () => {
   const { id } = useParams(); // Get the tag ID from the URL
@@ -11,16 +12,14 @@ const EditTag = () => {
   const [tagColor, setTagColor] = useState("#000000");
   const [btnLoading, setBtnLoading] = useState(false);
 
-  // Fetch the tag data when the component mounts
   const fetchTagData = async () => {
     try {
-      const response = await axios.get(
-        `https://api.manovaidya.com/api/get-single-tags/${id}`
-      );
-      // console.log(response)
-      const tag = response.data.data;
-      setTagName(tag.tagName);
-      setTagColor(tag.tagColor);
+      const response = await getData(`api/tag/get-tag-by-id/${id}`);
+      if (response.status) {
+        const tag = response?.data;
+        setTagName(tag?.tagName);
+        setTagColor(tag?.tagColor);
+      }
     } catch (error) {
       toast.error("Error fetching tag data!");
     }
@@ -39,12 +38,11 @@ const EditTag = () => {
         tagName,
         tagColor,
       };
-      const response = await axios.put(
-        `https://api.manovaidya.com/api/update-tags/${id}`,
-        updatedTag
-      );
-      toast.success("Tag updated successfully!");
-      navigate("/all-tags"); // Redirect to All Tags page after success
+      const response = await postData(`api/tag/update-tags/${id}`, updatedTag);
+      if (response.status) {
+        toast.success("Tag updated successfully!");
+        navigate("/all-tags");
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {

@@ -69,25 +69,19 @@ router.get('/get-category-by-id/:id', async (req, res) => {
 // Create new category (admin only)
 router.post('/create-category', upload.single('categoryImage'), async (req, res) => {
   try {
-    const { categoryName, description, shortDescription, categoryStatus, productId, faq, healthTestId } = req.body;
+    const { categoryName, description, shortDescription, categoryStatus, productId, faq, healthTestId, connectCommunity } = req.body;
 
     console.log("CCCCC", req?.body);
 
     // Validate categoryName
     if (!categoryName || categoryName.trim() === '') {
-      return res.status(200).json({
-        success: false,
-        message: 'Category name is required and cannot be empty'
-      });
+      return res.status(200).json({ success: false, message: 'Category name is required and cannot be empty' });
     }
 
     // Check if category already exists
     const existingCategory = await Categorie.findOne({ categoryName });
     if (existingCategory) {
-      return res.status(200).json({
-        success: false,
-        message: 'Category with this name already exists'
-      });
+      return res.status(200).json({ success: false, message: 'Category with this name already exists' });
     }
 
     // Process uploaded image (if any)
@@ -108,41 +102,21 @@ router.post('/create-category', upload.single('categoryImage'), async (req, res)
           productIds = [];
         }
       } catch (error) {
-        return res.status(200).json({
-          success: false,
-          message: 'Invalid productId format'
-        });
+        return res.status(200).json({ success: false, message: 'Invalid productId format' });
       }
     }
 
     // Create new category
-    const category = new Categorie({
-      categoryName,
-      description,
-      shortDescription,
-      productId: productIds,  // Use the parsed ObjectId array
-      image,
-      faq,
-      isActive,
-      healthTestId: healthTestId
-    });
+    const category = new Categorie({ categoryName, description, shortDescription, productId: productIds, image, faq, isActive, connectCommunity, healthTestId: healthTestId });
 
     // Save the category to the database
     await category.save();
 
     // Return success response
-    res.status(201).json({
-      success: true,
-      message: 'Category created successfully',
-      category
-    });
+    res.status(201).json({ success: true, message: 'Category created successfully', category });
   } catch (error) {
     console.error('Create category error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create category',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Failed to create category', error: error.message });
   }
 });
 
@@ -150,25 +124,20 @@ router.post('/create-category', upload.single('categoryImage'), async (req, res)
 // Update category (admin only)
 router.post('/update-category/:id', upload.single('categoryImage'), async (req, res) => {
   try {
-    const { categoryName, description, shortDescription, oldImage, categoryStatus, productId, position } = req.body;
+    const { categoryName, description, shortDescription, categoryStatus, productId, faq, healthTestId, connectCommunity } = req.body;
     console.log("CCCCC", req?.body);
 
     if (!categoryName || categoryName.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        message: 'Category name is required and cannot be empty'
-      });
+      return res.status(400).json({ success: false, message: 'Category name is required and cannot be empty' });
     }
 
     const category = await Categorie.findById(req.params.id);
 
     if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: 'Category not found'
-      });
+      return res.status(404).json({ success: false, message: 'Category not found' });
     }
-
+    let productIds = [];
+    productIds = JSON.parse(productId);
     // Handle image upload
     let image = category.image;
     if (req.file) {
@@ -183,19 +152,17 @@ router.post('/update-category/:id', upload.single('categoryImage'), async (req, 
       image = req.file.filename;
     }
 
-    // Safely handle productId
-    let parsedProductId = [];
-    if (productId) {
-      parsedProductId = productId.split(',').map((id) => id.trim()); // Convert string to array of IDs
-    }
 
     // Update category fields
     category.categoryName = categoryName || category.categoryName;
     category.description = description || category.description;
     category.shortDescription = shortDescription || category.shortDescription;
-    category.productId = parsedProductId || category.productId;
-    category.image = image;
-    category.position = position !== undefined ? position : category.position;
+    category.productId = productIds || category.productId;
+    category.connectCommunity = connectCommunity || category.connectCommunity;
+    category.healthTestId = healthTestId || category.healthTestId;
+    category.image = image || category.image;
+    category.faq = faq || category.faq
+    // category.position = position !== undefined ? position : category.position;
     category.isActive = categoryStatus === 'true' || categoryStatus === true ? true : false;
 
     // Save the updated category

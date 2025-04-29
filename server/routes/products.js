@@ -8,6 +8,8 @@ import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import Review from '../models/Reviews.js';
+import { type } from 'os';
+import Category from '../models/Categories.js'
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -21,22 +23,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 const router = express.Router();
 
-// Get all products
 router.get('/all-product', async (req, res) => {
   try {
-    const {
-      category,
-      subcategory,
-      minPrice,
-      maxPrice,
-      sort,
-      search,
-      disease,
-      page = 1,
-     
+    const { category, subcategory, minPrice, maxPrice, sort, search, disease, page = 1,
+
     } = req.query;
 
     // Build filter object
@@ -61,10 +53,7 @@ router.get('/all-product', async (req, res) => {
       ];
     }
 
-    // Only active products for regular users
-    // filter.isActive = true;
 
-    // Build sort object
     let sortOption = {};
     if (sort) {
       switch (sort) {
@@ -87,12 +76,10 @@ router.get('/all-product', async (req, res) => {
       sortOption = { createdAt: -1 };
     }
 
-
-
     // Execute query
-    const products = await Product.find(filter)
-      .sort(sortOption)
-   
+    const products = await Product.find(filter).sort(sortOption)
+      .populate('variant.tagType')
+    // console.log("BODYS", products)
     // .populate('category', 'name')
     // .populate('subcategory', 'name')
     // .populate('colors', 'name code')
@@ -102,30 +89,19 @@ router.get('/all-product', async (req, res) => {
 
     // Get total count for pagination
     const total = await Product.countDocuments(filter);
-    // console.log("XXXXXXXXXXXXXXX", products)
-    res.status(200).json({
-      success: true,
-      products,
-      pagination: {
-        total,
- 
-      }
-    });
+
+    res.status(200).json({ success: true, products, pagination: { total, } });
   } catch (error) {
     console.error('Get products error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get products',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Failed to get products', error: error.message });
   }
 });
 
-// Get product by ID
 router.get('/get_product_by_id/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate('herbsId')
+      .populate('variant.tagType')
     // .populate('subcategory', 'name')
     // .populate('colors', 'name code')
     // .populate('sizes', 'name')
@@ -157,29 +133,16 @@ router.get('/get_product_by_id/:id', async (req, res) => {
   }
 });
 
-// Create new product (admin only)
 router.post('/create-product', upload.fields([{ name: 'productImages', maxCount: 8 }, { name: 'blogImages', maxCount: 4 }]), async (req, res) => {
   try {
-    const {
-      productName,
-      productSubDescription,
-      productDescription,
-      Variant,
-      herbs,
-      faqs,
-      urls,
-      smirini,
-      herbsId,
-    } = req.body;
-
-    // console.log("Incoming Data:", req.body);
-    // console.log("Received files:", req?.files);
-
+    const { productName, productSubDescription, productDescription, Variant, herbs, faqs, urls, RVUS, smirini, herbsId, } = req.body;
+    console.log("BODY:-", req.body)
     // Parse JSON strings if they are provided as strings
     const parsedVariants = typeof Variant === 'string' ? JSON.parse(Variant) : Variant;
     const parsedHerbs = typeof herbs === 'string' ? JSON.parse(herbs) : herbs;
     const parsedFaqs = typeof faqs === 'string' ? JSON.parse(faqs) : faqs;
     const parsedUrls = typeof urls === 'string' ? JSON.parse(urls) : urls;
+    const parsedRVUS = typeof RVUS === 'string' ? JSON.parse(RVUS) : RVUS;
 
     let parsedHerbsId = [];
     if (herbsId) {
@@ -190,93 +153,42 @@ router.post('/create-product', upload.fields([{ name: 'productImages', maxCount:
       }
     }
 
-    // Handle the uploaded files (productImages and blogImages)
     const productImages = req.files['productImages'] ? req.files['productImages'].map(file => file.filename) : [];
     const blogImages = req.files['blogImages'] ? req.files['blogImages'].map(file => file.filename) : [];
 
     // Construct the Variant array
-    const variants = parsedVariants.map((v) => ({
-      price: parseFloat(v.price),
-      discountPrice: parseFloat(v.discountPrice),
-      finalPrice: parseFloat(v.finalPrice).toFixed(2), // Ensure finalPrice is a number with 2 decimal places
-      day: v.day,
-      bottle: v.bottle,
-      tex: v.tex
-    }));
+    const variants = parsedVariants.map((v) => ({ price: parseFloat(v.price), discountPrice: parseFloat(v.discountPrice), finalPrice: parseFloat(v.finalPrice).toFixed(2), day: v.day, bottle: v.bottle, tex: v.tex, tagType: v.tagType }));
 
     // Construct the Herbs array and handle empty images gracefully
     const herbsArray = parsedHerbs || []; // Default to empty array if undefined
 
     // Construct the FAQ array
-    const faqsArray = parsedFaqs.map((faq) => ({
-      question: faq.question,
-      answer: faq.answer
-    }));
+    const faqsArray = parsedFaqs.map((faq) => ({ question: faq.question, answer: faq.answer }));
 
     // Construct the URLs array
-    const urlsArray = parsedUrls.map((url) => ({
-      url: url.url
-    }));
+    const urlsArray = parsedUrls.map((url) => ({ url: url.url }));
+
+    const RVUSArray = parsedRVUS.map((RVU) => ({ RVU: RVU.RVU }));
 
     // Create a new Product document
-    const product = new Product({
-      productName,
-      productSubDescription,
-      productDescription,
-      variant: variants,
-      herbs: herbsArray,
-      herbsId: parsedHerbsId, // Add the parsed herbsId
-      faqs: faqsArray,
-      urls: urlsArray,
-      smirini,
-      productImages,
-      blogImages,
-    });
+    const product = new Product({ productName, productSubDescription, productDescription, variant: variants, herbs: herbsArray, herbsId: parsedHerbsId, faqs: faqsArray, urls: urlsArray, RVUS: RVUSArray, smirini, productImages, blogImages });
 
     // Save the product to the database
     await product.save();
 
     // Send a success response
-    res.status(201).json({
-      success: true,
-      message: 'Product created successfully',
-      product,
-    });
+    res.status(201).json({ success: true, message: 'Product created successfully', product, });
   } catch (error) {
     // Log and return error if something fails
     console.error('Create product error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create product',
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: 'Failed to create product', error: error.message, });
   }
 });
 
-
-
-
-
 router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCount: 8 }, { name: 'blogImages', maxCount: 4 }]), async (req, res) => {
   try {
-    const {
-      productName,
-      productSubDescription,
-      productDescription,
-      Variant,
-      herbs,
-      faqs,
-      urls,
-      oldProductImage,
-      oldBlogImage,
-      herbsId,
-      smirini
-    } = req.body;
+    const { productName, productSubDescription, productDescription, Variant, herbs, faqs, urls, RVUS, oldProductImage, oldBlogImage, herbsId, smirini } = req.body;
 
-    // console.log("Incoming Data:", req.body);
-    // console.log("Received files:", req?.files);
-
-    // Safe JSON parsing with error handling
     const parseJson = (jsonString) => {
       try {
         return JSON.parse(jsonString);
@@ -290,7 +202,8 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
     const parsedHerbs = herbs ? parseJson(herbs) : [];
     const parsedFaqs = faqs ? parseJson(faqs) : [];
     const parsedUrls = urls ? parseJson(urls) : [];
-    console.log("parsedHerbs bbbbbbbbbbbb", parsedVariants);
+    const parsedRVUS = RVUS ? parseJson(RVUS) : [];
+    // console.log("parsedHerbs bbbbbbbbbbbb", parsedVariants);
 
     let parsedHerbsId = [];
     if (herbsId) {
@@ -299,10 +212,7 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
 
     const product = await Product.findById(req.params.id);
     if (!product) {
-      return res.status(200).json({
-        success: false,
-        message: 'Product not found',
-      });
+      return res.status(200).json({ success: false, message: 'Product not found', });
     }
 
     // Handle uploaded product and blog images
@@ -317,26 +227,14 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
     }
 
     // Construct the Variant array
-    const variants = parsedVariants.map((v) => ({
-      price: parseFloat(v.price) || 0,
-      discountPrice: parseFloat(v.discountPrice) || 0,
-      finalPrice: parseFloat(v.finalPrice).toFixed(2) || '0.00',
-      day: v.day || '',
-      bottle: v.bottle || '',
-      tex: v.tex || '0',
-    }));
+    const variants = parsedVariants.map((v) => ({ price: parseFloat(v.price) || 0, discountPrice: parseFloat(v.discountPrice) || 0, finalPrice: parseFloat(v.finalPrice).toFixed(2) || '0.00', day: v.day || '', bottle: v.bottle || '', tex: v.tex || '0', tagType: v.tagType || '' }));
 
     const herbsArray = parsedHerbs || []; // Default to empty array if undefined
 
-    // Construct the FAQ array
-    const faqsArray = parsedFaqs.map((faq) => ({
-      question: faq.question,
-      answer: faq.answer,
-    }));
+    const faqsArray = parsedFaqs.map((faq) => ({ question: faq.question, answer: faq.answer, }));
 
-    const urlsArray = parsedUrls.map((url) => ({
-      url: url.url,
-    }));
+    const urlsArray = parsedUrls.map((url) => ({ url: url.url, }));
+    const RVUSArray = parsedRVUS.map((RVU) => ({ RVU: RVU.RVU, }));
 
     // Handling product image deletions and updates
     let updatedProductImages = product.productImages || [];
@@ -399,24 +297,17 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
     product.herbsId = parsedHerbsId.length > 0 ? parsedHerbsId : product.herbsId;
     product.faqs = faqsArray.length > 0 ? faqsArray : product.faqs;
     product.urls = urlsArray.length > 0 ? urlsArray : product.urls;
+    product.RVUS = RVUSArray.length > 0 ? RVUSArray : product.RVUS;
     product.productImages = updatedProductImages.length > 0 ? updatedProductImages : product.productImages;
     product.blogImages = updatedBlogImages.length > 0 ? updatedBlogImages : product.blogImages;
 
     // Save the updated product
     await product.save();
 
-    res.status(200).json({
-      success: true,
-      message: 'Product updated successfully',
-      product,
-    });
+    res.status(200).json({ success: true, message: 'Product updated successfully', product, });
   } catch (error) {
     console.error('Update product error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update product',
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: 'Failed to update product', error: error.message, });
   }
 });
 
@@ -496,9 +387,6 @@ router.post('/change-status-wellnessKits', async (req, res) => {
   }
 });
 
-
-
-
 // // Add product review
 
 // router.post('/reviews', upload.single('profileImage'), async (req, res) => {
@@ -558,13 +446,15 @@ router.post('/change-status-wellnessKits', async (req, res) => {
 // });
 
 // Fixing __dirname issue for ES modules
+// 
 
 router.post('/reviews', upload.single('profileImage'), async (req, res) => {
   try {
-    const { name, rating, email, reviewText,productId } = req.body;
+    console.log("CCCCCCCCCCCrrrrrrrr", req.body)
+    const { name, rating, email, reviewText, productId } = req.body;
     const profileImage = req.file ? req.file.path : null; // Profile image file path
 
-    const newReview = new Review({ name, rating, email, reviewText, profileImage,productId });
+    const newReview = new Review({ name, rating, email, reviewText, profileImage, productId });
 
     await newReview.save();
 
@@ -575,6 +465,24 @@ router.post('/reviews', upload.single('profileImage'), async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to add review', error: error.message });
   }
 });
+
+router.post('/without-image-reviews', async (req, res) => {
+  try {
+    console.log("without-image-reviews", req.body)
+    const { name, rating, email, reviewText, productId } = req.body;
+
+    const newReview = new Review({ name, rating, email, reviewText, productId });
+
+    await newReview.save();
+
+    res.status(201).json({ success: true, message: 'Review added successfully', review: newReview });
+
+  } catch (error) {
+    console.error('Add review error:', error);
+    res.status(500).json({ success: false, message: 'Failed to add review', error: error.message });
+  }
+});
+
 
 router.get("/get-all-reviews", async (req, res) => {
   try {
@@ -660,6 +568,81 @@ router.get("/delete-reviews/:reviewId", async (req, res) => {
   } catch (error) {
     console.error('Error deleting review:', error);
     res.status(500).json({ success: false, message: 'Failed to delete review', error: error.message });
+  }
+});
+
+
+// router.get('/search-all-product', async (req, res) => {
+//   const { search } = req.query;
+//   console.log("searchTerm:", search);
+//   try {
+//     // Search matching categories
+//     const matchingCategories = await Category.find({
+//       name: { $regex: term, $options: 'i' }
+//     }).select('_id');
+
+//     const matchingCategoryIds = matchingCategories.map(cat => cat._id);
+//     const searchConditions = [
+//       { productName: { $regex: term, $options: 'i' } },
+//       { type: { $regex: term, $options: 'i' } },
+//       { price: { $regex: term, $options: 'i' } },
+//     ];
+
+//     if (!isNaN(term)) {
+//       searchConditions.push({ price: Number(term) });
+//     }
+
+//     if (matchingCategoryIds.length > 0) {
+//       searchConditions.push({ categoryId: { $in: matchingCategoryIds } });
+//     }
+//     const products = await Product.find({ $or: searchConditions }).populate("categoryId");
+//     res.status(200).json({ success: true, message: 'Product Fetched Successfully', products })
+//   } catch (error) {
+//     console.error('Error deleting review:', error);
+//     res.status(500).json({ success: false, message: 'Failed to delete review', error: error.message });
+//   }
+// })
+
+router.get('/search-all-product', async (req, res) => {
+  const { search } = req.query;
+  console.log("searchTerm:", search);
+
+  try {
+    const searchRegex = new RegExp(search, 'i');
+
+    // 1. Find matching category IDs (optional)
+    const matchingCategories = await Category.find({
+      name: { $regex: searchRegex }
+    }).select('_id');
+    const matchingCategoryIds = matchingCategories.map(cat => cat._id);
+
+    // 2. Build dynamic search conditions
+    const searchConditions = [
+      { productName: searchRegex }, { smirini: searchRegex }, { productDescription: searchRegex },
+      { productSubDescription: searchRegex }, { 'variant.day': searchRegex }, { 'variant.bottle': searchRegex },
+      { 'variant.tex': searchRegex },
+    ];
+
+    // If numeric, search variant.price/finalPrice
+    if (!isNaN(search)) {
+      searchConditions.push({ 'variant.price': Number(search) });
+      searchConditions.push({ 'variant.finalPrice': Number(search) });
+    }
+
+    // If matching categories found
+    if (matchingCategoryIds.length > 0) {
+      searchConditions.push({ categoryId: { $in: matchingCategoryIds } });
+    }
+
+    // 3. Perform product search
+    const products = await Product.find({ $or: searchConditions }).sort({createdAt: -1});
+
+    // 4. Send response
+    res.status(200).json({ success: true, message: 'Products fetched successfully', products });
+
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch products', error: error.message });
   }
 });
 

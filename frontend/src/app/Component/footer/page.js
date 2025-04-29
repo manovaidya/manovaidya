@@ -32,12 +32,15 @@ const page = () => {
             {/* Follow Us Section */}
             <div className="col-md-4">
               <h5>Follow Us</h5>
-              <div className="social-icons">
-                <a href="#" className="text-dark">
+              <div className="social-icons d-flex gap-3">
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="text-dark">
                   <i className="bi bi-facebook"></i>
                 </a>
-                <a href="#" className="text-dark">
+                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="text-dark">
                   <i className="bi bi-youtube"></i>
+                </a>
+                <a href="https://www.instagram.com/silent_lover_aasib_mp07" target="_blank" rel="noopener noreferrer" className="instagram-icon">
+                  <i className="bi bi-instagram"></i>
                 </a>
               </div>
             </div>
@@ -47,13 +50,13 @@ const page = () => {
               <h5>Categories</h5>
               <div className="footer-category-list">
                 <ul className="list-unstyled">
-                {categories?.map((categorie, index) => (
-                  <li key={index}>
-                  <Link className="text-decoration-none" href={`/Pages/product-tips/${categorie?._id}`} key={index}>
-                  <i className="bi bi-arrow-right-circle"></i> {categorie?.categoryName}
-                  </Link>
-                  </li>
-                ))}
+                  {categories?.map((categorie, index) => (
+                    <li key={index}>
+                      <Link className="text-decoration-none" href={`/Pages/product-tips/${categorie?._id}`} key={index}>
+                        <i className="bi bi-arrow-right-circle"></i> {categorie?.categoryName}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -64,17 +67,17 @@ const page = () => {
               <ul className="list-unstyled">
                 <li>
                   <Link href={"/Pages/contactUs"}>
-                  <i className="bi bi-arrow-right-circle"></i> Contact Us
+                    <i className="bi bi-arrow-right-circle"></i> Contact Us
                   </Link>
                 </li>
                 <li>
                   <Link href={"/Pages/blog"}>
-                  <i className="bi bi-arrow-right-circle"></i> Blog
+                    <i className="bi bi-arrow-right-circle"></i> Blog
                   </Link>
                 </li>
                 <li>
                   <Link href={"/Pages/terms-conditions"}>
-                  <i className="bi bi-arrow-right-circle"></i> Term & Conditions's
+                    <i className="bi bi-arrow-right-circle"></i> Term & Conditions's
                   </Link>
                 </li>
                 <li>
@@ -82,7 +85,7 @@ const page = () => {
                 </li>
                 <li>
                   <Link href={"/Pages/return-and-refund-policy"}>
-                  <i className="bi bi-arrow-right-circle"></i> Return/Refund Policy
+                    <i className="bi bi-arrow-right-circle"></i> Return/Refund Policy
                   </Link>
                 </li>
               </ul>

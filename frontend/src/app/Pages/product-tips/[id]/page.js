@@ -7,9 +7,11 @@ import Link from "next/link";
 import { getData, serverURL } from "@/app/services/FetchNodeServices";
 import { Parser } from "html-to-react";
 import '../../../Pages/products/products.css'
+import { useRouter } from "next/navigation";
 
 const page = ({ params }) => {
     const { id } = use(params);
+    const router = useRouter();
     const [categories, setCategories] = useState([])
     const [wellnessKitss, setWellnessKits] = useState([])
     const [reviews, setReviews] = useState([]);
@@ -186,9 +188,12 @@ const page = ({ params }) => {
                         <p>
                             {Parser().parse(categories?.description)}
                         </p>
-                        <button className="bynowbtn" style={{maxWidth:'fit-content'}}>
-                            Connect Our Community
-                        </button>
+                        <Link href={`${categories?.connectCommunity}`}   style={{ textDecoration: "none", color: "inherit" }}>
+                            <button className="bynowbtn" style={{ maxWidth: 'fit-content' }}>
+                                Connect Our Community
+                            </button>
+                        </Link>
+
                     </div>
                 </div>
             </section>

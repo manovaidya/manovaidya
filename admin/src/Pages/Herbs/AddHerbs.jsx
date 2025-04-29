@@ -108,7 +108,7 @@ const AddHerbs = () => {
                     <h4>Add Herbs</h4>
                 </div>
                 <div className="links">
-                    <Link to="/all-products" className="add-new">
+                    <Link to="/All-Herbs-For-Natural" className="add-new">
                         Back <i className="fa-regular fa-circle-left"></i>
                     </Link>
                 </div>

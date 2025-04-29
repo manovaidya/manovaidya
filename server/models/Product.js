@@ -43,6 +43,11 @@ const productSchema = new mongoose.Schema({
     tex: {
       type: String, // Assuming the 'tex' is a string (you can change this based on your use case)
       required: true
+    },
+    tagType: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tag',
+      require: true
     }
   }],
   productImages: [{
@@ -70,6 +75,12 @@ const productSchema = new mongoose.Schema({
   }],
   urls: [{
     url: {
+      type: String,
+      required: true
+    }
+  }],
+  RVUS: [{
+    RVU: {
       type: String,
       required: true
     }

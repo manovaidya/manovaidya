@@ -20,8 +20,17 @@ import { useDispatch } from "react-redux";
 import { login } from '../../../redux/slices/user-slice'
 import { toast, ToastContainer } from "react-toastify";
 import { formatDate } from "@/app/constant";
+import image1 from "../../../Images/paymantIcon/google-pay 1.png";
+import image2 from "../../../Images/paymantIcon/640px-Paytm_logo 1.png";
+import image3 from "../../../Images/paymantIcon/images 1.png";
+import image4 from "../../../Images/paymantIcon/Mastercard-logo.svg 1.png";
+import image5 from "../../../Images/paymantIcon/visa-logo-png-image-4 (1) 1.png";
+
+const paymentImages = [{ name: image1 }, { name: image2 }, { name: image3 }, { name: image4 }, { name: image5 }]
+
 const Page = ({ params }) => {
   // Unwrap the params with React.use()
+
   const dispatch = useDispatch()
   const { id } = use(params);
   const router = useRouter();
@@ -32,7 +41,7 @@ const Page = ({ params }) => {
   const [user_token, setUser_token] = useState(null)
   const [buttonText, setButtonText] = useState('Add To Cart')
   const [btn, setBtn] = useState(false)
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState({ profileImage: null });
   const [review, setReview] = useState([])
   // const [ratingDistribution, setRatingDistribution] = useState([]);
 
@@ -129,7 +138,7 @@ const Page = ({ params }) => {
         icon: "success",
         confirmButtonText: "Go to Cart",
       }).then(() => {
-        setButtonText("Okay");
+        setButtonText("Go to Cart");
       });
     }
   };
@@ -137,49 +146,108 @@ const Page = ({ params }) => {
   const goToCart = () => {
     router.push(`/Pages/cart/${User_data?._id}`);
   };
-  // console.log("XXXXXXXXXXXXXXXX", product?.urls[0].url)
 
+  const BuyItNow = () => {
+    const quantity = 1;
+    const item = localStorage.getItem("productItem");
+    const bd = { product, quantity, item };
+
+    const cartss = JSON.parse(sessionStorage.getItem("carts")) || [];
+    const cartLocal = JSON.parse(localStorage.getItem("carts")) || [];
+
+    const isProductInCart = cartss.some((cartItem) => cartItem.product._id === bd.product._id);
+
+    if (isProductInCart) {
+      Swal.fire({
+        title: "Item Already in Cart!",
+        text: "This item is already in your cart.",
+        icon: "info",
+        confirmButtonText: "Go to Cart",
+      }).then(() => {
+        router.push(`/Pages/Checkout/${User_data?._id}`);
+        // setButtonText.router.push('/Pages/cart/id')
+        // setButtonText("Okay");
+      })
+    } else {
+      let body = { userId: User_data?._id, productId: product?._id, quantity, item };
+
+      const updatedCartLocal = [...cartLocal, body];
+      localStorage.setItem("carts", JSON.stringify(updatedCartLocal));
+      const updatedCartSession = [...cartss, bd];
+      sessionStorage.setItem("carts", JSON.stringify(updatedCartSession));
+      dispatch(login({ cart: updatedCartSession }));
+      Swal.fire({
+        title: "Item Added!",
+        text: "Your item has been added to the cart.",
+        icon: "success",
+        confirmButtonText: "Go to Cart",
+      }).then(() => {
+        setButtonText("Go to Cart");
+        router.push(`/Pages/Checkout/${User_data?._id}`);
+      });
+    }
+  }
+  // console.log("XXXXXXXXXXXXXXXX", product?.urls[0].url)
 
   const handleReviewImage = (event) => {
     setFormData((prevData) => ({ ...prevData, profileImage: { bytes: event.target.files[0], filename: URL.createObjectURL(event.target.files[0]) } }))
   };
 
   const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formData);
-
-    if (!formData?.profileImage?.filename) {
-      alert("Please upload an image.");
-      return;
-    }
-
-    const form = new FormData();
-    form.append("name", formData.name);
-    form.append("productId", id);
-    form.append("profileImage", formData.profileImage.bytes);
-    form.append("rating", formData.rating);
-    form.append("email", formData.email);
-    form.append("reviewText", formData.reviewText);
+    e.preventDefault(); // You should prevent default to avoid page reload
+    console.log("Form Data:", formData);
 
     try {
-      const res = await postData("api/products/reviews", form);
-      console.log("Response:", res);
-      if (res.success === true) {
-        toast.success("Review submitted successfully!")
-        setFormData({ name: '', email: '', rating: '', reviewText: '', profileImage: null });
-        const modal = new bootstrap.Modal(document.getElementById('exampleModalToggle'));
-        modal.hide();
-      } else {
-        toast.error(res?.message || "Something Worng!")
-      }
+      if (formData?.profileImage?.bytes) {
+        // If image is selected
+        const form = new FormData();
+        form.append("name", formData.name || '');
+        form.append("productId", id);
+        form.append("profileImage", formData.profileImage.bytes);
+        form.append("rating", formData.rating || '');
+        form.append("email", formData.email || '');
+        form.append("reviewText", formData.reviewText || '');
 
+        const res = await postData("api/products/reviews", form);
+        console.log("Response:", res);
+
+        if (res.success) {
+          toast.success("Review submitted successfully!");
+          resetForm();
+        } else {
+          toast.error(res?.message || "Something went wrong!");
+        }
+
+      } else {
+        // No image selected -> Submit without image
+        const body = { name: formData.name || '', email: formData.email || '', rating: formData.rating || '', reviewText: formData.reviewText || '', productId: id };
+
+        const res = await postData("api/products/without-image-reviews", body);
+        console.log("Response:", res);
+
+        if (res.success) {
+          toast.success("Review submitted successfully!");
+          resetForm();
+        } else {
+          toast.error(res?.message || "Something went wrong!");
+        }
+      }
 
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("There was an error submitting your review. Please try again.");
+      toast.error("There was an error submitting your review. Please try again.");
     }
   };
-  console.log("XXXXXXXXXXXXXX", review)
+
+  const resetForm = () => {
+    setFormData({ name: '', email: '', rating: '', reviewText: '', profileImage: null });
+    const modalElement = document.getElementById('exampleModalToggle');
+    if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modal.hide();
+    }
+  };
+  // console.log("XXXXXXXXXXXXXX", review)
 
 
   const ratingDistribution = [1, 2, 3, 4, 5].map(rating => ({
@@ -214,7 +282,7 @@ const Page = ({ params }) => {
     ],
   };
 
-
+  console.log("XXXXXXXXXXXXXX:==", product)
 
   return (
     <>
@@ -283,7 +351,7 @@ const Page = ({ params }) => {
                     <span style={{ fontWeight: "bold", fontSize: "30px" }}>
                       {product.rating}
                     </span>
-                    <span style={{ color: "#FFD700", fontSize: "28px" }}>★★★★</span>
+                    <span style={{ color: "#FFD700", fontSize: "28px" }}>★★★★★</span>
                   </div>
 
                   <p className="m-0">
@@ -305,20 +373,19 @@ const Page = ({ params }) => {
                         <div
                           className={`product-detail-card ${selectedIndex === index ? "selected" : ""}`}
                           onClick={() => handleSelect(index, item)}>
-                            <div className="product-detail-card-content">
-                          {selectedIndex === index && <span className="tick-mark">✔</span>}
-                          <p className="smrini-duration">{item?.duration}</p>
-                          <p className="smrini-bottle">{item?.bottle}</p>
-                          <hr />
-                          <p className="smrini-original-price">
-                            ₹ <del>{item?.price}</del>
-                          </p>
-                          <p className="smrini-price">₹ {item?.finalPrice}</p>
-                          <p className="smrini-discount">{item?.discountPrice}% Off</p>
-                          <p className="smrini-taxes">{item?.tex} Taxes</p>
-                          <p className="smrini-saving">Save ₹ {item?.savings}</p>
+                          <div className="product-detail-card-content">
+                            {selectedIndex === index && <span className="tick-mark">✔</span>}
+                            <p className="smrini-duration">{item?.duration}</p>
+                            <p className="smrini-bottle">{item?.day}</p>
+                            <p className="smrini-bottle">{item?.bottle}</p>
+                            <hr />
+                            <p className="smrini-original-price">₹ <del>{item?.price}</del></p>
+                            <p className="smrini-price">₹ {item?.finalPrice}</p>
+                            <p className="smrini-discount">{item?.discountPrice}% Off</p>
+                            <p className="smrini-taxes">{item?.tex} Taxes</p>
+                            <p className="smrini-saving">Save ₹ {item?.savings}</p>
                           </div>
-                          <p className="smrini-bestseller">Bestseller</p>
+                          <p className="smrini-bestseller" style={{ background: `${item?.tagType?.tagColor}` }}>{item?.tagType?.tagName || "Best Seller"}</p>
 
                         </div>
                       </div>
@@ -342,17 +409,18 @@ const Page = ({ params }) => {
                     )}
 
                     <div className="col-md-12">
-                      <div onClick={goToCart} className="bynowbtn mt-3" style={{ cursor: "pointer" }}>
+                      <div onClick={btn ? BuyItNow : () => toast.error("Select Price")} className="bynowbtn mt-3" style={{ cursor: "pointer" }}>
                         BUY IT NOW
                       </div>
                     </div>
                   </div>
+
                   {/* Payment Images */}
                   <div className="col-md-12">
                     <div className="payment-images">
-                      {product?.paymentImages?.map((image, index) => (
+                      {paymentImages?.map((image, index) => (
                         <Link href="/" key={index}>
-                          <Image src={image} alt="Payment Option" />
+                          <Image src={image?.name} alt="Payment Option" />
                         </Link>
                       ))}
                     </div>
@@ -479,6 +547,30 @@ const Page = ({ params }) => {
           </div>
         </div>
       </section>
+
+      {product?.RVUS.length > 0 ? <section className="doctor-advice-videos">
+        <div className="container">
+          <h2>Review Video </h2>
+          <div className="row">
+            {product?.RVUS?.map((video) => (<>
+              {console.log(`${video?.RVU}`)}
+              <div className="col-md-4 col-6" key={video?._id}>
+                <div className="video-card">
+                  <iframe
+                    width="100%"
+                    height="250"
+                    src={video?.RVU}
+                    title={`Doctor's Advice - ${video?._id}`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+            </>))}
+          </div>
+        </div>
+      </section> : ""}
 
 
       <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
@@ -625,7 +717,7 @@ const Page = ({ params }) => {
                   <div className="card-body p-2">
                     <div className="d-flex align-items-center mb-4">
                       <img
-                        src={`${serverURL}/${review?.profileImage}`}
+                        src={review?.profileImage ? `${serverURL}/${review.profileImage}` : `${serverURL}/uploads/logos/fav.jpg`}
                         alt={review?.name}
                         className="rounded-circle me-3"
                         style={{
