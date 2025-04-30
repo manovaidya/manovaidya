@@ -7,60 +7,68 @@ import { Parser } from "html-to-react";
 import Slider from "react-slick";
 import { toast } from 'react-toastify';
 
+// ⚠️ Fix: Declare the HTML parser once (otherwise it may cause errors in render loop)
+const htmlParser = new Parser();
+
 const Page = ({ title }) => {
   const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([])
-  const [diseases, setDiseases] = useState([])
-
+  const [products, setProducts] = useState([]);
+  const [diseases, setDiseases] = useState([]);
 
   const fetchAllDisease = async () => {
     try {
       const response = await getData('api/subcategories/get-all-sub-diseases');
-      console.log("DATA:GGGGGG", response)
-      if (response?.success === true) {
-        const activeDiseases = response?.subcategories?.filter(product => product?.isActive === true);
+      if (response?.success && response?.subcategories) {
+        const activeDiseases = response.subcategories.filter(item => item?.isActive);
         setDiseases(activeDiseases);
       } else {
         toast.error("Failed to load sub diseases");
       }
     } catch (error) {
+      console.error(error);
       toast.error("An error occurred while fetching sub diseases");
     }
   };
 
-
   const fetchProduct = async () => {
-    const data = await getData('api/products/all-product');
-    // console.log("DATA:", data);
-    if (data?.success === true) {
-      // Filter the products where isActive is true
-      const activeProducts = data?.products?.filter(product => product?.wellnessKits === true);
-      setProducts(activeProducts);
-    }
-  }
-  // Fetch categories data
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getData('api/categories/get-All-category');
-        if (response?.success === true) {
-          // setCategories(response?.categories);
-          const activecategories = response?.categories?.filter(categorie => categorie?.isActive === true);
-          setCategories(activecategories);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
+    try {
+      const data = await getData('api/products/all-product');
+      if (data?.success && data?.products) {
+        const activeProducts = data.products.filter(p => p?.wellnessKits === true);
+        setProducts(activeProducts);
+      } else {
+        toast.error("Failed to load products");
       }
-    };
-    fetchAllDisease()
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while fetching products");
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await getData('api/categories/get-All-category');
+      if (response?.success && response?.categories) {
+        const activeCategories = response?.categories.filter(c => c?.isActive);
+        setCategories(activeCategories);
+      } else {
+        toast.error("Failed to load categories");
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Error loading categories");
+    }
+  };
+
+  useEffect(() => {
+    fetchAllDisease();
     fetchCategories();
-    fetchProduct()
+    fetchProduct();
   }, []);
 
-  console.log(products, "PRODUCTS")
   const CustomNextArrow = ({ onClick }) => (
     <div className="custom-slider-arrow custom-next-arrow" onClick={onClick}>
-      <i class="bi bi-arrow-right"></i>
+      <i className="bi bi-arrow-right"></i>
     </div>
   );
 
@@ -74,40 +82,28 @@ const Page = ({ title }) => {
     autoplay: true,
     dots: false,
     infinite: true,
-    arrow: true,
     speed: 500,
     slidesToShow: 5,
+    slidesToScroll: 1,
     nextArrow: <CustomNextArrow />,
     prevArrow: <CustomPrevArrow />,
-    slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1024, // for tablets and smaller desktops
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          infinite: true,
-        },
+        breakpoint: 1024,
+        settings: { slidesToShow: 3, slidesToScroll: 1 }
       },
       {
-        breakpoint: 768, // for mobile devices
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-        },
-      },
+        breakpoint: 768,
+        settings: { slidesToShow: 2, slidesToScroll: 1 }
+      }
     ],
   };
 
-
   return (
     <>
-
+      {/* Sidebar Buttons */}
       <section className="sidebutton">
-        <a href="/">
-          <i className="bi bi-arrow-up-circle"></i>
-        </a>
+        <a href="/"><i className="bi bi-arrow-up-circle"></i></a>
       </section>
 
       <section className="sidewhatsapp">
@@ -121,69 +117,53 @@ const Page = ({ title }) => {
           <i className="bi bi-telephone"></i>
         </a>
       </section>
+
       <section className="sideInstagram">
         <a href="https://www.instagram.com/silent_lover_aasib_mp07" target="_blank" rel="noopener noreferrer">
           <i className="bi bi-instagram"></i>
         </a>
       </section>
 
-      {/* <section id="explore-by-diseases" className="top-cards">
-        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem' }}>Explore Our Treatments by Health Condition</h2>
-        <div className="cards-container">
-          {categories?.map((categorie, index) => (
-            <Link className="text-decoration-none" href={`/Pages/product-tips/${categorie?._id}`} key={index}>
-              <div data-aos="fade-up" className="card-main">
-                <img
-                  src={`${serverURL}/uploads/categorys/${categorie.image}`}
-                  alt={categorie?.categoryName}
-                  className="hero-cardDieses"
-                />
-              </div>
-              <p style={{ color: 'black', fontWeight: '600' }}>{categorie?.categoryName}</p>
-            </Link>
-          ))}
-        </div>
-      </section> */}
-
+      {/* Category Slider */}
       <section className="top-cards-slider">
-        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem', marginTop: '1rem' }}>Explore Our Treatments by Health Condition</h2>
+        <h2 className="text-center" style={{ fontWeight: '700', color: 'var(--purple)', marginBottom: '1rem', marginTop: '1rem' }}>
+          Explore Our Treatments by Health Condition
+        </h2>
         <div className="container-fluid" style={{ overflow: 'hidden' }}>
-          <div className="slider-container">
-            <Slider {...settings}>
-              {categories?.map((card, index) => (
-                <div className="card-slide" key={index}>
-                  <Link className="text-decoration-none" href={`/Pages/product-tips/${card?._id}`}>
-                    <div className="card-main">
-                      <img
-                        src={`${serverURL}/uploads/categorys/${card.image}`}
-                        alt={card?.categoryName}
-                        className="card-image"
-                        width={300}
-                        height={200}
-                      />
-                      <p className="disease-responsive" style={{ color: 'black', fontWeight: '600' }}>{card?.categoryName}</p>
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </Slider>
-          </div>
-
+          <Slider {...settings}>
+            {categories.map((card, index) => (
+              <div className="card-slide" key={index}>
+                <Link className="text-decoration-none" href={`/Pages/product-tips/${card?._id}`}>
+                  <div className="card-main">
+                    <img
+                      src={`${serverURL}/uploads/categorys/${card.image}`}
+                      alt={card?.categoryName}
+                      className="card-image"
+                      width={300}
+                      height={200}
+                    />
+                    <p className="disease-responsive" style={{ color: 'black', fontWeight: '600' }}>{card?.categoryName}</p>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </Slider>
         </div>
       </section>
 
+      {/* Products Section */}
       <section className="ayurved-product">
         <div className="container">
           <h2 className="text-center text-purple">Ayurvedic Wellness Kits</h2>
           <div className="row">
-            {products?.map((kit, index) => (
+            {products.map((kit, index) => (
               <div className="col-md-6 col-6 col-lg-4" key={index}>
                 <Link className="pruduct-link-all" href={`/Pages/products/${kit?._id}`}>
                   <div className="product-card">
                     <div className="row align-items-center">
                       <div className="col-md-4">
                         <img
-                          src={`${serverURL}/uploads/products/${kit?.productImages[0]}`}
+                          src={`${serverURL}/uploads/products/${kit?.productImages?.[0]}`}
                           alt={kit?.title}
                           className="card-img-top"
                           width={200}
@@ -195,20 +175,19 @@ const Page = ({ title }) => {
                         <div className="product-card-details">
                           <h5>{kit?.productName}</h5>
                           <span className="descrip">
-                            {Parser().parse(kit?.productDescription)}</span>
+                            {kit?.productDescription ? htmlParser.parse(kit.productDescription) : ""}
+                          </span>
                           <div className="detail-sec">
                             <p className="off-price m-0">
                               <b style={{ fontSize: "14px" }}>
-                                {kit?.variant[0]?.discountPrice} % off
+                                {kit?.variant?.[0]?.discountPrice} % off
                               </b>
                             </p>
                             <span className="final-price">
-                              ₹ {kit?.variant[0]?.finalPrice}
+                              ₹ {kit?.variant?.[0]?.finalPrice}
                             </span>
                             <p className="del-mrp">
-                              MRP: <del>
-                                ₹ {kit?.variant[0]?.price}
-                              </del>
+                              MRP: <del>₹ {kit?.variant?.[0]?.price}</del>
                             </p>
                           </div>
                         </div>
@@ -223,26 +202,22 @@ const Page = ({ title }) => {
       </section>
 
       <section className="product-overview-bg">
-        <Link href={'/Pages/products'}>
-
+        <Link href="/Pages/products">
           <button className="buy-now">Buy It Now</button>
         </Link>
       </section>
 
+      {/* Diseases Section */}
       <section className="MentalHealthCards">
         <div className="container">
           <div className="row justify-content-center">
-            {diseases?.map((item, index) => (
-              <div
-                className="col-lg-2 col-md-4 col-6 health_cards_main"
-                key={index}
-              // onClick={() => localStorage.setItem('diseasData', JSON.stringify({ id: item._id, title: 'diseas' }))}
-              >
+            {diseases.length > 0 && diseases.map((item, index) => (
+              <div className="col-lg-2 col-md-4 col-6 health_cards_main" key={index}>
                 <Link href={{ pathname: `/Pages/products`, query: { id: item?._id, title: 'subDiseas' } }}>
                   <div data-aos="zoom-in-down" className="Mental-card-main shadow-lg">
                     <img
                       src={`${serverURL}/uploads/subcategorys/${item?.image}`}
-                      alt={item.name}
+                      alt={item?.name}
                       className="health-card-image"
                       width={100}
                       height={100}
@@ -262,4 +237,3 @@ const Page = ({ title }) => {
 };
 
 export default Page;
-

@@ -69,8 +69,8 @@ const Page = () => {
   ];
 
   const handleRemoveItem = (item) => {
-    console.log("item", item.product._id, cart[0].product._id);
-    const updatedCart = cart.filter((cartItem) => cartItem.product._id !== item.product._id);
+    console.log("item", item?.product?._id, cart[0]?.product?._id);
+    const updatedCart = cart?.filter((cartItem) => cartItem?.product?._id !== item?.product?._id);
     console.log("item", updatedCart);
     sessionStorage.setItem("carts", JSON.stringify(updatedCart));
     setCart(updatedCart);
@@ -117,7 +117,7 @@ const Page = () => {
     dispatch(login(newCartItems));
     sessionStorage.setItem("carts", JSON.stringify(newCartItems)); // Update sessionStorage
   };
-  console.log("CXXXXXXXXXXX", cart)
+  // console.log("CXXXXXXXXXXX", cart)
   return (
     <>
       {/* Top Nav for Coupons */}
