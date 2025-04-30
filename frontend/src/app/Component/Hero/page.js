@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getData, serverURL } from "@/app/services/FetchNodeServices";
 import { Parser } from "html-to-react";
 import Slider from "react-slick";
+import { toast } from 'react-toastify';
 
 const Page = ({ title }) => {
   const [categories, setCategories] = useState([]);
@@ -16,7 +17,7 @@ const Page = ({ title }) => {
     try {
       const response = await getData('api/subcategories/get-all-sub-diseases');
       console.log("DATA:GGGGGG", response)
-      if (response.success) {
+      if (response?.success === true) {
         const activeDiseases = response?.subcategories?.filter(product => product?.isActive === true);
         setDiseases(activeDiseases);
       } else {
@@ -33,7 +34,7 @@ const Page = ({ title }) => {
     // console.log("DATA:", data);
     if (data?.success === true) {
       // Filter the products where isActive is true
-      const activeProducts = data?.products.filter(product => product.wellnessKits === true);
+      const activeProducts = data?.products?.filter(product => product?.wellnessKits === true);
       setProducts(activeProducts);
     }
   }
@@ -42,9 +43,9 @@ const Page = ({ title }) => {
     const fetchCategories = async () => {
       try {
         const response = await getData('api/categories/get-All-category');
-        if (response.success === true) {
+        if (response?.success === true) {
           // setCategories(response?.categories);
-          const activecategories = response?.categories.filter(categorie => categorie.isActive === true);
+          const activecategories = response?.categories?.filter(categorie => categorie?.isActive === true);
           setCategories(activecategories);
         }
       } catch (error) {

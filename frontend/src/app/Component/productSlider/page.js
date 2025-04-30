@@ -10,6 +10,7 @@ import "./productSlider.css";
 import { getData, serverURL } from "@/app/services/FetchNodeServices";
 import { Parser } from "html-to-react";
 import Link from "next/link";
+import { toast } from 'react-toastify';
 
 // Import images
 import icon1 from "../../Images/pure-ingredents.png";
