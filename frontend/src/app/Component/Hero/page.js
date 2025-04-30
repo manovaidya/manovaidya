@@ -22,7 +22,7 @@ const Page = ({ title }) => {
         const activeDiseases = response.subcategories.filter(item => item?.isActive);
         setDiseases(activeDiseases);
       } else {
-        toast.error("Failed to load sub diseases");
+        toast.error("Failed to load sub diseases server error");
       }
     } catch (error) {
       console.error(error);
