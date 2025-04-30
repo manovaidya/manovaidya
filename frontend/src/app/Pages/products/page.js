@@ -1,17 +1,22 @@
 "use client";
 import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
-import "./products.css";
+import './products.css';
 import { getData, serverURL } from "@/app/services/FetchNodeServices";
 import { Parser } from "html-to-react";
+import { useSearchParams } from "next/navigation";
 
-const Page = ({ searchParams }) => {
-  const { id = "", title = "", searchTerm = "" } = searchParams || {};
+const Page = () => {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") || "";
+  const title = searchParams.get("title") || "";
+  const searchTerm = searchParams.get("searchTerm") || "";
+
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  console.log("DDDDDDDDDDDDDDDDDDDDDDDD:--", id, title, searchTerm)
   useEffect(() => {
     const fetchReviews = async () => {
       try {
