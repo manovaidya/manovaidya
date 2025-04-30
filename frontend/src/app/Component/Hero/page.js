@@ -18,11 +18,12 @@ const Page = ({ title }) => {
   const fetchAllDisease = async () => {
     try {
       const response = await getData('api/subcategories/get-all-sub-diseases');
-      if (response?.success && response?.subcategories) {
-        const activeDiseases = response.subcategories.filter(item => item?.isActive);
+      if (response?.success === true) {
+        // alert("fetchAllDisease")
+        const activeDiseases = response?.subcategories?.filter(item => item?.isActive);
         setDiseases(activeDiseases);
       } else {
-        toast.error("Failed to load sub diseases server error");
+        // toast.error("Failed to load sub diseases server error");
       }
     } catch (error) {
       console.error(error);
@@ -33,26 +34,29 @@ const Page = ({ title }) => {
   const fetchProduct = async () => {
     try {
       const data = await getData('api/products/all-product');
-      if (data?.success && data?.products) {
-        const activeProducts = data.products.filter(p => p?.wellnessKits === true);
-        setProducts(activeProducts);
+      if (data?.success === true) {
+        // alert("fetchProduct")
+        const activeProducts = data?.products?.filter(p => p?.wellnessKits === true);
+        setProducts(activeProducts || []);
       } else {
-        toast.error("Failed to load products");
+        // toast.error("Failed to load products");
       }
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred while fetching products");
+      // toast.error("An error occurred while fetching products");
     }
   };
 
   const fetchCategories = async () => {
     try {
       const response = await getData('api/categories/get-All-category');
-      if (response?.success && response?.categories) {
-        const activeCategories = response?.categories.filter(c => c?.isActive);
+      // console.log("XXXXXXXXXXX:--X:--", response)
+      if (response?.success === true) {
+        // alert("fetchCategories")
+        const activeCategories = response?.categories?.filter(c => c?.isActive);
         setCategories(activeCategories);
       } else {
-        toast.error("Failed to load categories");
+        // toast.error("Failed to load categories");
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -130,13 +134,13 @@ const Page = ({ title }) => {
           Explore Our Treatments by Health Condition
         </h2>
         <div className="container-fluid" style={{ overflow: 'hidden' }}>
-          <Slider {...settings}>
-            {categories.map((card, index) => (
+          {categories?.length > 0 && <Slider {...settings}>
+            {categories?.map((card, index) => (
               <div className="card-slide" key={index}>
                 <Link className="text-decoration-none" href={`/Pages/product-tips/${card?._id}`}>
                   <div className="card-main">
                     <img
-                      src={`${serverURL}/uploads/categorys/${card.image}`}
+                      src={`${serverURL}/uploads/categorys/${card?.image}`}
                       alt={card?.categoryName}
                       className="card-image"
                       width={300}
@@ -148,6 +152,8 @@ const Page = ({ title }) => {
               </div>
             ))}
           </Slider>
+          }
+
         </div>
       </section>
 
@@ -155,8 +161,8 @@ const Page = ({ title }) => {
       <section className="ayurved-product">
         <div className="container">
           <h2 className="text-center text-purple">Ayurvedic Wellness Kits</h2>
-          <div className="row">
-            {products.map((kit, index) => (
+          {products?.length > 0 && <div className="row">
+            {products?.map((kit, index) => (
               <div className="col-md-6 col-6 col-lg-4" key={index}>
                 <Link className="pruduct-link-all" href={`/Pages/products/${kit?._id}`}>
                   <div className="product-card">
@@ -175,7 +181,7 @@ const Page = ({ title }) => {
                         <div className="product-card-details">
                           <h5>{kit?.productName}</h5>
                           <span className="descrip">
-                            {kit?.productDescription ? htmlParser.parse(kit.productDescription) : ""}
+                            {kit?.productDescription ? htmlParser.parse(kit?.productDescription) : ""}
                           </span>
                           <div className="detail-sec">
                             <p className="off-price m-0">
@@ -197,7 +203,8 @@ const Page = ({ title }) => {
                 </Link>
               </div>
             ))}
-          </div>
+          </div>}
+
         </div>
       </section>
 
@@ -211,7 +218,7 @@ const Page = ({ title }) => {
       <section className="MentalHealthCards">
         <div className="container">
           <div className="row justify-content-center">
-            {diseases.length > 0 && diseases.map((item, index) => (
+            {diseases?.length > 0 && diseases?.map((item, index) => (
               <div className="col-lg-2 col-md-4 col-6 health_cards_main" key={index}>
                 <Link href={{ pathname: `/Pages/products`, query: { id: item?._id, title: 'subDiseas' } }}>
                   <div data-aos="zoom-in-down" className="Mental-card-main shadow-lg">

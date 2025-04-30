@@ -30,7 +30,7 @@ const Page = () => {
     const data = await getData('api/products/all-product');
     console.log("DATA:", data);
     if (data?.success === true) {
-      const activeProducts = data?.products.filter(product => product.isActive === true);
+      const activeProducts = data?.products?.filter(product => product?.isActive === true);
       setProducts(activeProducts);
     }
   };
@@ -60,9 +60,9 @@ const Page = () => {
 
   // Get the average rating of the product by productId
   const getProductRating = (productId) => {
-    const productReviews = reviews.filter(review => review.productId === productId);
-    const totalRating = productReviews.reduce((acc, review) => acc + review.rating, 0);
-    return productReviews.length > 0 ? (totalRating / productReviews.length).toFixed(1) : 5;
+    const productReviews = reviews?.filter(review => review?.productId === productId);
+    const totalRating = productReviews?.reduce((acc, review) => acc + review?.rating, 0);
+    return productReviews?.length > 0 ? (totalRating / productReviews?.length).toFixed(1) : 5;
   };
 
   return (
