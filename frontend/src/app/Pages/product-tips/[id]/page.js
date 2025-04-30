@@ -58,7 +58,6 @@ const page = ({ params }) => {
         const totalRating = productReviews.reduce((acc, review) => acc + review.rating, 0);
         return productReviews.length > 0 ? (totalRating / productReviews.length).toFixed(1) : 3;
     };
-
     return (
         <>
             <section className="product-tips">
@@ -67,22 +66,23 @@ const page = ({ params }) => {
                         <div className="product-tips-heading">
                             <h3>{categories?.categoryName}</h3>
                         </div>
-                        <p>
-                            {categories?.shortDescription}
-                        </p>
+                        <div>
+                            <span>{categories?.shortDescription}</span>
+                        </div>
+
                         <div className="product-tips-test">
-                            <p>
-                                <b>
-                                    Take the test now to find your personalized solution for
-                                    mental wellness!
-                                </b>
-                            </p>
+                            <div>
+                                <span>
+                                    <b>
+                                        Take the test now to find your personalized solution for
+                                        mental wellness!
+                                    </b>
+                                </span>
+                            </div>
                             <button>
 
                                 <Link
                                     className="text-white text-decoration-none"
-
-                                    // href={`/Pages/product-tips-detail/${categories?._id}`}
                                     href={`/Pages/mental-health-test/${categories?.healthTestId}`}
                                 >
                                     Take the Test now for your mental health diagnosis
@@ -108,53 +108,28 @@ const page = ({ params }) => {
                                             className="product-image"
                                         />
                                         <div className="product-details">
-                                            <p className="title">{item.title}</p>
+                                            <div className="title">{item.title}</div>
                                             <h5 className="product-name">{item?.productName}</h5>
-                                            <p className="product-desc">{Parser().parse(item?.productSubDescription)}</p>
+                                            <div className="product-desc">{Parser().parse(item?.productSubDescription)}</div>
                                             <div className="product-footer" style={{ alignItems: 'center', justifyContent: 'space-between', alignItems: 'end' }}>
                                                 <div className="product-price m-0">
                                                     <div>
-                                                        <p className="del-mrp">
+                                                        <div className="del-mrp">
                                                             MRP: <del>
                                                                 ₹ {item?.variant[0]?.price}
                                                             </del>
-                                                        </p>
+                                                        </div>
                                                         <span className="final-price">
                                                             <strong>₹ {item?.variant[0]?.finalPrice}</strong>
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <p className="off-price m-0">
+                                                <div className="off-price m-0">
                                                     <b style={{ fontSize: "14px" }}>
                                                         {item?.variant[0]?.discountPrice}% off
                                                     </b>
-                                                </p>
-                                                {/* <p className="product-slider-rating">
-                                                    {getProductRating(item?._id)} <i className="bi bi-star"></i> (
-                                                    {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
-                                                </p> */}
-                                            </div>
-
-                                            {/* <div className="product-footer">
-                                                <div className="product-footer">
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                                        <p className="product-price m-0">
-                                                            ₹ <span>{item?.variant[0]?.finalPrice}</span>
-                                                        </p>
-                                                        <p className="product-final-price m-0" style={{ textDecoration: 'line-through' }}>
-                                                            ₹ <span>{item?.variant[0]?.price}</span>
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <span className="off-price">{item?.variant[0]?.discountPrice} % Off</span>
-                                                        <p>SAVE - ₹{item?.variant[0]?.price - item?.variant[0]?.finalPrice}</p>
-                                                        <p className="product-rating m-0" style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: -10 }}>
-                                                            {getProductRating(item?._id)}  <i className="bi bi-star-fill"></i> (
-                                                            {reviews.filter(review => review.productId === item?._id).length || 0} reviews)
-                                                        </p>
-                                                    </div>
                                                 </div>
-                                            </div> */}
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
@@ -185,10 +160,10 @@ const page = ({ params }) => {
                         <h5 className="mt-4">
                             Complete Buyer’s Guide: Choosing the Right {categories?.categoryName}
                         </h5>
-                        <p>
-                            {Parser().parse(categories?.description)}
-                        </p>
-                        <Link href={`${categories?.connectCommunity}`}   style={{ textDecoration: "none", color: "inherit" }}>
+                        <div>
+                            <span>  {Parser().parse(categories?.description)}</span>
+                        </div>
+                        <Link href={`${categories?.connectCommunity}`} style={{ textDecoration: "none", color: "inherit" }}>
                             <button className="bynowbtn" style={{ maxWidth: 'fit-content' }}>
                                 Connect Our Community
                             </button>
@@ -224,19 +199,19 @@ const page = ({ params }) => {
                                                 </span>
                                             </div>
                                             <div className="detail-sec">
-                                                <p className="off-price m-0">
+                                                <div className="off-price m-0">
                                                     <b style={{ fontSize: "14px" }}>
                                                         {kit?.variant[0]?.discountPrice} % off
                                                     </b>
-                                                </p>
+                                                </div>
                                                 <span className="final-price">
                                                     <strong>₹ {kit?.variant[0]?.finalPrice}</strong>
                                                 </span>
-                                                <p className="del-mrp">
+                                                <div className="del-mrp">
                                                     MRP: <del>
                                                         ₹ {kit?.variant[0]?.price}
                                                     </del>
-                                                </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
