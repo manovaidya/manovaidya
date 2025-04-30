@@ -26,17 +26,10 @@ router.get('/get-all-sub-diseases', async (req, res) => {
   try {
     const subcategories = await SubCategory.find({}).sort({ position: 1 }).populate('productId');
     console.log("BODY", subcategories);
-    res.status(200).json({
-      success: true,
-      subcategories
-    });
+    res.status(200).json({ success: true, subcategories });
   } catch (error) {
     console.error('Get subcategories error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get subcategories',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Failed to get subcategories', error: error.message });
   }
 });
 
