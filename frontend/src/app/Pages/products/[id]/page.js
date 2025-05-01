@@ -284,6 +284,11 @@ const Page = ({ params }) => {
 
   console.log("XXXXXXXXXXXXXX:==", product)
 
+  const handleReview = () => {
+    alert("Login First Then Give Review")
+    router.push('/Pages/Login');
+  };
+
   return (
     <>
       <ToastContainer />
@@ -376,16 +381,16 @@ const Page = ({ params }) => {
                           <div className="product-detail-card-content">
                             {selectedIndex === index && <span className="tick-mark">✔</span>}
                             <p className="smrini-duration">{item?.duration}</p>
-                            <h1 className="smrini-price" style={{color:'#800080'}}>{item?.day}</h1>
+                            <h1 className="smrini-price" style={{ color: '#800080' }}>{item?.day}</h1>
                             <p className="smrini-bottle">{item?.bottle}</p>
                             <hr />
                             <p className="smrini-original-price">₹ <del>{item?.price}</del></p>
                             <p className="smrini-price">₹ {item?.finalPrice}</p>
                             <p className="smrini-discount">{item?.discountPrice}% Off</p>
                             <p className="smrini-taxes" >{item?.tex}% Taxes</p>
-                            <p className="smrini-saving">Save ₹ {(item?.price-item?.finalPrice).toFixed(2)}</p>
+                            <p className="smrini-saving">Save ₹ {(item?.price - item?.finalPrice).toFixed(2)}</p>
                           </div>
-                          
+
                           <p className="smrini-bestseller" style={{ background: `${item?.tagType?.tagColor}` }}>{item?.tagType?.tagName || "Best Seller"}</p>
 
                         </div>
@@ -640,7 +645,9 @@ const Page = ({ params }) => {
             <h4>Customer Reviews Advice</h4>
             {user_token ? <button class="btn bg-warning" style={{ marginRight: '50px' }} data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
               Give Review
-            </button> : ""}
+            </button> : <button class="btn bg-warning" onClick={handleReview} style={{ marginRight: '50px' }} data-bs-target="#exampleModalToggle" >
+              Give Review
+            </button>}
           </div>
           <hr />
 
