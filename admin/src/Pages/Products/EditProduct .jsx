@@ -43,7 +43,7 @@ const EditProduct = () => {
                         productName: productData?.productName || "",
                         productSubDescription: productData?.productSubDescription || "",
                         productDescription: productData?.productDescription || "",
-                        Variant: productData?.variant?.length > 0 ? productData?.variant.map(v => ({ ...v, price: v?.price || 0, discountPrice: v?.discountPrice || 0, finalPrice: v?.finalPrice || 0, day: v?.day || "", bottle: v?.bottle || "", tex: v?.tex || "0", tagType: v?.tagType })) : [],
+                        Variant: productData?.variant?.length > 0 ? productData?.variant.map(v => ({ ...v, price: v?.price || 0, discountPrice: v?.discountPrice || 0, finalPrice: v?.finalPrice || 0, day: v?.day || "", bottle: v?.bottle || "", tex: v?.tex || "0", tagType: v?.tagType?._id })) : [],
                         oldProductImage: productData?.productImages?.length > 0 ? productData?.productImages : [],
                         oldBlogImage: productData?.blogImages?.length > 0 ? productData?.blogImages : [],
                         faqs: productData?.faqs?.length > 0 ? productData?.faqs.map(faq => ({ question: faq?.question || "", answer: faq?.answer || "", })) : [],

@@ -50,7 +50,7 @@ const Page = ({ title }) => {
   const fetchCategories = async () => {
     try {
       const response = await getData('api/categories/get-All-category');
-      // console.log("XXXXXXXXXXX:--X:--", response)
+      console.log("XXXXXXXXXXX:--X:--", response)
       if (response?.success === true) {
         // alert("fetchCategories")
         const activeCategories = response?.categories?.filter(c => c?.isActive);

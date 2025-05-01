@@ -3,8 +3,13 @@ import SubCategory from '../models/SubCategory.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+// Define __dirname manually (for ES Modules)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
@@ -24,7 +29,7 @@ const router = express.Router();
 // Get all subcategories
 router.get('/get-all-sub-diseases', async (req, res) => {
   try {
-    const subcategories = await SubCategory.find({}).sort({ position: 1 }).populate('productId');
+    const subcategories = await SubCategory.find({}).sort({ createdAt: -1 }).populate('productId');
     console.log("BODY", subcategories);
     res.status(200).json({ success: true, subcategories });
   } catch (error) {
@@ -36,7 +41,7 @@ router.get('/get-all-sub-diseases', async (req, res) => {
 // // Get subcategory by ID
 router.get('/get-subcategory-by-id/:id', async (req, res) => {
   try {
-    const subcategory = await SubCategory.findById(req.params.id).populate('productId');
+    const subcategory = await SubCategory.findById(req.params.id).sort({ createdAt: -1 }).populate('productId');
 
     if (!subcategory) {
       return res.status(404).json({
@@ -141,46 +146,25 @@ router.get('/delete-sub-disease/:id', async (req, res) => {
     const subcategory = await SubCategory.findById(req.params.id);
 
     if (!subcategory) {
-      return res.status(404).json({
-        success: false,
-        message: 'Subcategory not found'
-      });
+      return res.status(404).json({ success: false, message: 'Subcategory not found' });
     }
 
-    // Check if there is an image and if the file exists, then delete it
     if (subcategory.image) {
-      const imagePath = path.join(`uploads/subcategorys/${subcategory.image}`);
+      const imagePath = path.join(__dirname, '..', 'uploads', 'subcategorys', subcategory.image);
 
-      fs.access(imagePath, fs.constants.F_OK, (err) => {
-        if (!err) {
-          // File exists, delete it
-          fs.unlink(imagePath, (unlinkErr) => {
-            if (unlinkErr) {
-              console.error('Error deleting image:', unlinkErr);
-            } else {
-              console.log('Image deleted successfully');
-            }
-          });
-        } else {
-          console.log('Image not found, skipping deletion');
-        }
-      });
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+        console.log('Image deleted successfully');
+      } else {
+        console.log('Image not found, skipping deletion');
+      }
     }
-
-    // Delete the subcategory from the database
     await subcategory.deleteOne();
+    res.status(200).json({ success: true, message: 'Subcategory deleted successfully', });
 
-    res.status(200).json({
-      success: true,
-      message: 'Subcategory deleted successfully'
-    });
   } catch (error) {
     console.error('Delete subcategory error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to delete subcategory',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Failed to delete subcategory', error: error.message, });
   }
 });
 

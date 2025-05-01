@@ -18,7 +18,11 @@ const postData = async (url, body) => {
 const getData = async (url) => {
     try {
         var response = await axios.get(`${serverURL}/${url}`)
+        console.log(`${serverURL}/${url}`,"our url" );
+        
         var data = response.data
+        console.log("response in get data",data);
+        
         return data
     }
     catch (e) {

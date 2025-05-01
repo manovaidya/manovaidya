@@ -3,6 +3,7 @@ import Herbs from '../models/Herbs.js';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import { create } from 'domain';
 
 const router = express.Router();
 
@@ -79,7 +80,7 @@ router.post('/create-herbs', upload.any('herbsImage'), async (req, res) => {
 
 router.get('/get-all-herbs', async (req, res) => {
     try {
-        const herbs = await Herbs.find()
+        const herbs = await Herbs.find().sort({ createdAt: -1 })
 
         if (!herbs || herbs.length === 0) {
             return res.status(404).json({ error: 'No herbs found' });
@@ -100,7 +101,7 @@ router.get('/get-herbs-by-id/:id', async (req, res) => {
     const herbId = req.params.id;  // Get the herb ID from the URL parameter
 
     try {
-        const herb = await Herbs.findById(herbId);
+        const herb = await Herbs.findById(herbId).sort({ createdAt: -1 });
 
         if (!herb) {
             return res.status(404).json({ error: 'Herb not found' });
@@ -113,9 +114,6 @@ router.get('/get-herbs-by-id/:id', async (req, res) => {
     }
 });
 
-
-
-
 router.post('/update-herbs/:id', upload.any('herbsImage'), async (req, res) => {
     try {
         console.log("Request Body:", req.body); // Debugging request body
@@ -123,7 +121,7 @@ router.post('/update-herbs/:id', upload.any('herbsImage'), async (req, res) => {
 
         // Parse the 'herbs' field from the request body
         const data = JSON.parse(req.body.herbs);
-        const {  name, content } = data;
+        const { name, content } = data;
 
         // Check if files are uploaded
         let imageUrls = [];
@@ -170,7 +168,7 @@ router.post('/update-herbs-without-image/:id', async (req, res) => {
         console.log("Uploaded Files:", req.files);
 
         const data = JSON.parse(req.body.herbs);
-        const {  name, content } = data;
+        const { name, content } = data;
         const existingHerb = await Herbs.findById(req.params.id);
         if (!existingHerb) {
             return res.status(404).json({ error: 'Herb not found' });
@@ -203,22 +201,16 @@ router.post('/update-herbs-without-image/:id', async (req, res) => {
 });
 
 
-
-
 router.get('/delete-herbs/:id', async (req, res) => {
     try {
         // Find and delete the herb record by ID
-        const deletedHerb = await Herbs.findByIdAndDelete(req.params.id);
+        const deletedHerb = await Herbs.findByIdAndDelete(req.params.id).sort({ createdAt: -1 });
 
         if (!deletedHerb) {
             return res.status(404).json({ error: 'Herb not found' });
         }
 
-        res.status(200).json({
-            status: true,
-            message: 'Herb deleted successfully',
-            data: deletedHerb,
-        });
+        res.status(200).json({ status: true, message: 'Herb deleted successfully', data: deletedHerb, });
 
     } catch (error) {
         console.error('Error deleting herb:', error);
@@ -237,11 +229,7 @@ router.get('/get-herbs-by-product-id/:id', async (req, res) => {
         }
 
         // Return the found herbs
-        res.status(200).json({
-            status: true,
-            message: 'Herbs retrieved successfully',
-            data: herbs,
-        });
+        res.status(200).json({ status: true, message: 'Herbs retrieved successfully', data: herbs, });
 
     } catch (error) {
         console.error('Error retrieving herbs:', error);

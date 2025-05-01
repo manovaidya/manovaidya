@@ -1,8 +1,8 @@
 import express from 'express';
-import Blog from '../models/Blog.js'; 
+import Blog from '../models/Blog.js';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';  
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -106,13 +106,17 @@ router.get('/delete-blog/:id', async (req, res) => {
       return res.status(404).json({ message: 'Blog not found' });
     }
 
-    if (blog.blogImage) {
-      fs.unlinkSync(`${blog.blogImage}`);
+    if (blog.blogImage && fs.existsSync(blog.blogImage)) {
+      if (fs.existsSync(blog.blogImage)) {
+        fs.unlinkSync(`${blog.blogImage}`);
+      }
+
     }
 
-   const deletedBlog = await Blog.findByIdAndDelete(id);
 
-    res.status(200).json({  status: true, message: 'Blog deleted successfully' ,blogs:deletedBlog});
+    const deletedBlog = await Blog.findByIdAndDelete(id);
+
+    res.status(200).json({ status: true, message: 'Blog deleted successfully', blogs: deletedBlog });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error deleting blog', error });

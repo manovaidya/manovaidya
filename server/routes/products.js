@@ -4,6 +4,11 @@ import { authenticateToken, isAdmin } from '../middleware/auth.js';
 // import { upload } from '../server.js';
 // import upload from '../middleware/multer.js';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
@@ -229,7 +234,7 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
     // Construct the Variant array
     const variants = parsedVariants.map((v) => ({ price: parseFloat(v.price) || 0, discountPrice: parseFloat(v.discountPrice) || 0, finalPrice: parseFloat(v.finalPrice).toFixed(2) || '0.00', day: v.day || '', bottle: v.bottle || '', tex: v.tex || '0', tagType: v.tagType || '' }));
 
-    const herbsArray = parsedHerbs || []; // Default to empty array if undefined
+    const herbsArray = parsedHerbs || []; 
 
     const faqsArray = parsedFaqs.map((faq) => ({ question: faq.question, answer: faq.answer, }));
 
@@ -246,7 +251,6 @@ router.post('/update-product/:id', upload.fields([{ name: 'productImages', maxCo
           try {
             if (fs.existsSync(filePath)) {
               fs.unlinkSync(filePath);
-              // console.log(`Deleted old product image: ${item.trim()}`);
             }
           } catch (error) {
             console.error(`Error deleting old product image ${item.trim()}:`, error);
@@ -318,34 +322,50 @@ router.get("/delete-product/:id", async (req, res) => {
     // Find the product by ID
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
+      return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    // Check if product has images and delete them from the file system
-    if (product.productImages && product.productImages.length > 0) {
-      // Loop through each image and delete it from the file system
-      for (let i = 0; i < product.productImages.length; i++) {
-        fs.unlinkSync(`uploads/products/${product.productImages[i]}`);
+    // Delete product images
+    if (Array.isArray(product.productImages)) {
+      for (const image of product.productImages) {
+        const filePath = path.join(__dirname, "..", "uploads", "products", image.trim());
+        try {
+          fs.unlinkSync(filePath);
+          console.log("Deleted product image:", filePath);
+        } catch (err) {
+          if (err.code !== "ENOENT") {
+            console.error("Error deleting product image:", filePath, err);
+          } else {
+            console.warn("Product image not found:", filePath);
+          }
+        }
+      }
+    }
+
+    // Delete blog images
+    if (Array.isArray(product.blogImages)) {
+      for (const image of product.blogImages) {
+        const filePath = path.join(__dirname, "..", "uploads", "products", image.trim());
+        try {
+          fs.unlinkSync(filePath);
+          console.log("Deleted blog image:", filePath);
+        } catch (err) {
+          if (err.code !== "ENOENT") {
+            console.error("Error deleting blog image:", filePath, err);
+          } else {
+            console.warn("Blog image not found:", filePath);
+          }
+        }
       }
     }
 
     // Delete the product from the database
     await product.deleteOne();
 
-    res.status(200).json({
-      success: true,
-      message: "Product and associated images deleted successfully",
-    });
+    res.status(200).json({ success: true, message: "Product and associated images deleted successfully", });
   } catch (error) {
     console.error("Delete product error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete product",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: "Failed to delete product", error: error.message, });
   }
 });
 
@@ -483,7 +503,6 @@ router.post('/without-image-reviews', async (req, res) => {
   }
 });
 
-
 router.get("/get-all-reviews", async (req, res) => {
   try {
     const reviews = await (await Review.find()).reverse()
@@ -571,7 +590,6 @@ router.get("/delete-reviews/:reviewId", async (req, res) => {
   }
 });
 
-
 // router.get('/search-all-product', async (req, res) => {
 //   const { search } = req.query;
 //   console.log("searchTerm:", search);
@@ -635,7 +653,7 @@ router.get('/search-all-product', async (req, res) => {
     }
 
     // 3. Perform product search
-    const products = await Product.find({ $or: searchConditions }).sort({createdAt: -1});
+    const products = await Product.find({ $or: searchConditions }).sort({ createdAt: -1 });
 
     // 4. Send response
     res.status(200).json({ success: true, message: 'Products fetched successfully', products });

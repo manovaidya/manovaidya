@@ -47,7 +47,8 @@ const productSchema = new mongoose.Schema({
     tagType: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tag',
-      require: true
+      trim: true
+      // require: true
     }
   }],
   productImages: [{

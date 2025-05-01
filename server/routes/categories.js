@@ -26,10 +26,10 @@ router.get('/get-all-category', async (req, res) => {
     const categories = await Categorie.find({}).sort({ position: 1 });
     // console.log("categories", categories)
     // Respond with the list of categories
-    res.status(200).json({      success: true,      categories    });
+    res.status(200).json({ success: true, categories });
   } catch (error) {
     console.error('Get categories error:', error);
-    res.status(500).json({      success: false,      message: 'Failed to get categories',      error: error.message    });
+    res.status(500).json({ success: false, message: 'Failed to get categories', error: error.message });
   }
 });
 
@@ -117,7 +117,7 @@ router.post('/create-category', upload.single('categoryImage'), async (req, res)
 // Update category (admin only)
 router.post('/update-category/:id', upload.single('categoryImage'), async (req, res) => {
   try {
-    const { categoryName, description, shortDescription, categoryStatus, productId, faq, healthTestId, connectCommunity } = req.body;
+    const { categoryName, description, shortDescription, categoryStatus, productId, faq, healthTestId, connectCommunity,oldImage } = req.body;
     console.log("CCCCC", req?.body);
 
     if (!categoryName || categoryName.trim() === '') {
